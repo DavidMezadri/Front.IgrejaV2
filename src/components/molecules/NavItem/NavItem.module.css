@@ -1,0 +1,25 @@
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--fg-muted);
+  transition: background .15s ease, color .15s ease;
+  text-decoration: none;
+}
+.link:hover { background: var(--bg); color: var(--fg); }
+
+.active { background: var(--bg); color: var(--fg); box-shadow: var(--shadow-card); }
+.active .icon { color: var(--accent); }
+
+.icon {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+}
+.icon svg { display: block; }

@@ -1,0 +1,40 @@
+.grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 36px;
+}
+@media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+
+.side {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--surface);
+  align-self: start;
+  display: grid;
+  gap: 0;
+}
+.side h4 {
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--fg-muted); margin: 8px 12px 8px;
+}
+.side a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 8px; font-size: 14px;
+  color: var(--fg-muted); text-decoration: none;
+}
+.side a:hover, .active { background: var(--bg); color: var(--fg); }
+.side a small { color: var(--fg-muted); font-variant-numeric: tabular-nums; }
+
+.table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  overflow: hidden; background: var(--bg);
+}
+.table th, .table td { padding: 14px 18px; text-align: left; font-size: 14px; border-top: 1px solid var(--line); }
+.table th {
+  background: var(--surface); font-weight: 600;
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--fg-muted); border-top: 0;
+}
+.table tr:hover td { background: color-mix(in oklch, var(--surface) 40%, transparent); }

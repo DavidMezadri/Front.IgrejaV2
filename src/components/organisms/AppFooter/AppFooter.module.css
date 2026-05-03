@@ -1,0 +1,37 @@
+.foot {
+  padding: 56px 0 40px;
+  color: var(--fg-muted);
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(3, 1fr);
+  gap: 40px;
+}
+@media (max-width: 880px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 540px) { .grid { grid-template-columns: 1fr; } }
+
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.brandMark {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--fg); color: var(--bg);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  letter-spacing: 0.04em; flex-shrink: 0;
+}
+.brandName { font-weight: 600; font-size: 17px; color: var(--fg); }
+.brandSub { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.foot h4 { color: var(--fg); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.copy {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}

@@ -1,0 +1,38 @@
+.wrap {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.card {
+  width: 100%; max-width: 420px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  background: var(--bg);
+  display: grid;
+  gap: 0;
+}
+
+.card h2 { margin-bottom: 8px; }
+.card p { color: var(--fg-muted); margin-top: 0; margin-bottom: 28px; }
+
+.card label {
+  display: block;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg-muted); margin-bottom: 8px; margin-top: 14px;
+}
+
+.card input {
+  width: 100%; padding: 12px 14px; border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface); color: var(--fg); font: inherit;
+}
+
+.alt {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+}
+.alt a { text-decoration: underline; text-underline-offset: 3px; }
