@@ -1,13 +1,12 @@
-import { DATA } from '../../../data/mockData'
 import { MESES_CURTO, fmtHora, tipoCor } from '../../../utils/dateUtils'
 import styles from './CalendarList.module.css'
 
-export default function CalendarList({ onPick }) {
-  const eventos = [...DATA.eventos].sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
+export default function CalendarList({ onPick, eventos = [] }) {
+  const sorted = [...eventos].sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
 
   return (
     <div className={styles.list}>
-      {eventos.map(ev => {
+      {sorted.map(ev => {
         const d = new Date(ev.dataInicio)
         return (
           <div className={styles.row} key={ev.id}>

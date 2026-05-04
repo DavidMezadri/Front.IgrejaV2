@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import NavItem from '../../molecules/NavItem/NavItem'
 import * as Icons from '../../atoms/Icon/Icon'
-import { DATA } from '../../../data/mockData'
 import styles from './Sidebar.module.css'
 
 const GROUPS = [
@@ -24,7 +23,7 @@ const GROUPS = [
   ]},
 ]
 
-export default function Sidebar({ theme, toggleTheme }) {
+export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
@@ -38,7 +37,7 @@ export default function Sidebar({ theme, toggleTheme }) {
         <Link to="/inicio" className={styles.brand} onClick={close}>
           <span className={styles.brandMark}>CG</span>
           <span>
-            <div className={styles.brandName}>{DATA.igreja.nome}</div>
+            <div className={styles.brandName}>{nomeIgreja}</div>
             <div className={styles.brandSub}>Desde 1996 · SP</div>
           </span>
         </Link>

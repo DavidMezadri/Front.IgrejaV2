@@ -1,15 +1,14 @@
 import { useMemo } from 'react'
-import { DATA } from '../../../data/mockData'
 import { MESES_CURTO, fmtHora } from '../../../utils/dateUtils'
 import styles from './HeroAgenda.module.css'
 
-export default function HeroAgenda() {
+export default function HeroAgenda({ eventos = [] }) {
   const proximos = useMemo(() =>
-    DATA.eventos
-      .filter(e => new Date(e.dataInicio) >= new Date(2026, 4, 1))
+    [...eventos]
+      .filter(e => new Date(e.dataInicio) >= new Date())
       .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
       .slice(0, 4)
-  , [])
+  , [eventos])
 
   return (
     <section className={styles.hero}>

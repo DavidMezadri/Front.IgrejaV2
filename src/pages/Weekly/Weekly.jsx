@@ -1,3 +1,4 @@
+import { DATA } from '../../data/mockData'
 import WeeklySchedule from '../../components/organisms/WeeklySchedule/WeeklySchedule'
 
 export default function Weekly() {
@@ -13,7 +14,7 @@ export default function Weekly() {
             Encontros fixos. Sem inscrição.<br />Todos são bem-vindos.
           </p>
         </div>
-        <WeeklySchedule />
+        <WeeklySchedule semanal={DATA.semanal} />
       </div>
     </section>
   )

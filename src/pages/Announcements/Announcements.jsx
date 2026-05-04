@@ -1,7 +1,9 @@
-import { DATA } from '../../data/mockData'
+import { useAvisos } from '../../hooks/useAvisos'
 import AnnouncementRow from '../../components/molecules/AnnouncementRow/AnnouncementRow'
 
 export default function Announcements() {
+  const { data: avisos = [] } = useAvisos()
+
   return (
     <section className="block" id="avisos">
       <div className="container">
@@ -12,7 +14,7 @@ export default function Announcements() {
           </div>
         </div>
         <div>
-          {DATA.avisos.map(a => (
+          {avisos.map(a => (
             <AnnouncementRow key={a.id} aviso={a} />
           ))}
         </div>

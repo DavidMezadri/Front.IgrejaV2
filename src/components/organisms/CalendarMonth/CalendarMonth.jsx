@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
-import { DATA } from '../../../data/mockData'
 import { DIAS, fmtHora, tipoCor } from '../../../utils/dateUtils'
 import styles from './CalendarMonth.module.css'
 
-export default function CalendarMonth({ year, month, onPick }) {
+export default function CalendarMonth({ year, month, onPick, eventos = [] }) {
   const first = new Date(year, month, 1)
   const startWeekday = first.getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -24,7 +23,7 @@ export default function CalendarMonth({ year, month, onPick }) {
 
   const eventosPorDia = useMemo(() => {
     const map = {}
-    DATA.eventos.forEach(e => {
+    eventos.forEach(e => {
       const d = new Date(e.dataInicio)
       const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
       ;(map[k] ||= []).push(e)

@@ -1,10 +1,9 @@
-import { DATA } from '../../../data/mockData'
 import styles from './WeeklySchedule.module.css'
 
-export default function WeeklySchedule() {
+export default function WeeklySchedule({ semanal = [] }) {
   return (
     <div className={styles.week}>
-      {DATA.semanal.map(c => (
+      {semanal.map(c => (
         <div className={styles.col} key={c.dia}>
           <h4>
             {c.dia}

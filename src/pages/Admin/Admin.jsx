@@ -1,9 +1,17 @@
-import { DATA } from '../../data/mockData'
+import { usePessoas } from '../../hooks/usePessoas'
+import { useFamilias } from '../../hooks/useFamilias'
+import { useEventos } from '../../hooks/useEventos'
+import { useTiposEvento } from '../../hooks/useTiposEvento'
 import { fmtDataLonga } from '../../utils/dateUtils'
 import Badge from '../../components/atoms/Badge/Badge'
 import styles from './Admin.module.css'
 
 export default function Admin() {
+  const { data: pessoas = [] } = usePessoas()
+  const { data: familias = [] } = useFamilias()
+  const { data: eventos = [] } = useEventos()
+  const { data: tiposEvento = [] } = useTiposEvento()
+
   return (
     <section className="block" id="admin">
       <div className="container">
@@ -17,10 +25,10 @@ export default function Admin() {
         <div className={styles.grid}>
           <aside className={styles.side}>
             <h4>Cadastros</h4>
-            <a className={styles.active} href="#">Pessoas <small>{DATA.pessoas.length}</small></a>
-            <a href="#">Famílias <small>{DATA.familias.length}</small></a>
-            <a href="#">Eventos <small>{DATA.eventos.length}</small></a>
-            <a href="#">Tipos de evento <small>{DATA.tiposEvento.length}</small></a>
+            <a className={styles.active} href="#">Pessoas <small>{pessoas.length}</small></a>
+            <a href="#">Famílias <small>{familias.length}</small></a>
+            <a href="#">Eventos <small>{eventos.length}</small></a>
+            <a href="#">Tipos de evento <small>{tiposEvento.length}</small></a>
             <h4>Operação</h4>
             <a href="#">Presenças</a>
             <a href="#">Usuários do sistema</a>
@@ -34,8 +42,8 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {DATA.pessoas.map(p => {
-                  const fam = DATA.familias.find(f => f.id === p.familiaId)
+                {pessoas.map(p => {
+                  const fam = familias.find(f => f.id === p.familiaId)
                   return (
                     <tr key={p.id}>
                       <td><b>{p.nome}</b></td>

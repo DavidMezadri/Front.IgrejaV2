@@ -1,7 +1,8 @@
-import { DATA } from '../../../data/mockData'
 import styles from './AppFooter.module.css'
 
-export default function AppFooter() {
+const DEFAULT_IGREJA = { nome: '', lema: '', endereco: '', telefone: '', email: '' }
+
+export default function AppFooter({ igreja = DEFAULT_IGREJA }) {
   return (
     <footer className={styles.foot}>
       <div className="container">
@@ -10,18 +11,18 @@ export default function AppFooter() {
             <div className={styles.brand}>
               <span className={styles.brandMark}>CG</span>
               <div>
-                <div className={styles.brandName}>{DATA.igreja.nome}</div>
+                <div className={styles.brandName}>{igreja.nome}</div>
                 <div className={styles.brandSub}>Desde 1996 · São Paulo</div>
               </div>
             </div>
-            <p>{DATA.igreja.lema} Cultos abertos a todos, sem distinção.</p>
+            <p>{igreja.lema} Cultos abertos a todos, sem distinção.</p>
           </div>
           <div>
             <h4>Endereço</h4>
             <ul>
-              <li>{DATA.igreja.endereco}</li>
-              <li>{DATA.igreja.telefone}</li>
-              <li>{DATA.igreja.email}</li>
+              <li>{igreja.endereco}</li>
+              <li>{igreja.telefone}</li>
+              <li>{igreja.email}</li>
             </ul>
           </div>
           <div>
@@ -44,7 +45,7 @@ export default function AppFooter() {
           </div>
         </div>
         <div className={styles.copy}>
-          <div>© 2026 {DATA.igreja.nome}. Todos os direitos reservados.</div>
+          <div>© 2026 {igreja.nome}. Todos os direitos reservados.</div>
           <div>Feito com cuidado para a comunidade.</div>
         </div>
       </div>

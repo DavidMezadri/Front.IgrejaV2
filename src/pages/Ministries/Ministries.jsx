@@ -1,8 +1,10 @@
-import { DATA } from '../../data/mockData'
+import { useMinisterios } from '../../hooks/useMinisterios'
 import MinistryCard from '../../components/molecules/MinistryCard/MinistryCard'
 import styles from './Ministries.module.css'
 
 export default function Ministries() {
+  const { data: ministerios = [] } = useMinisterios()
+
   return (
     <section className="block" id="ministerios">
       <div className="container">
@@ -14,8 +16,8 @@ export default function Ministries() {
           <a href="#/oracao" className="btn btn-ghost">Quero participar <span className="arrow" /></a>
         </div>
         <div className={styles.grid}>
-          {DATA.ministerios.map((m, i) => (
-            <MinistryCard key={m.id} ministry={m} index={i} total={DATA.ministerios.length} />
+          {ministerios.map((m, i) => (
+            <MinistryCard key={m.id} ministry={m} index={i} total={ministerios.length} />
           ))}
         </div>
       </div>

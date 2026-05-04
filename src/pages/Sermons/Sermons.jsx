@@ -1,8 +1,10 @@
-import { DATA } from '../../data/mockData'
+import { useSermoes } from '../../hooks/useSermoes'
 import SermonCard from '../../components/molecules/SermonCard/SermonCard'
 import styles from './Sermons.module.css'
 
 export default function Sermons() {
+  const { data: sermoes = [] } = useSermoes()
+
   return (
     <section className="block" id="sermoes">
       <div className="container">
@@ -14,7 +16,7 @@ export default function Sermons() {
           <a href="#" className="btn btn-ghost">Ver biblioteca <span className="arrow" /></a>
         </div>
         <div className={styles.grid}>
-          {DATA.sermoes.map(s => (
+          {sermoes.map(s => (
             <SermonCard key={s.id} sermon={s} />
           ))}
         </div>

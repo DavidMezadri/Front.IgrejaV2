@@ -1,15 +1,19 @@
-import { useState, useEffect } from 'react'
-import { DATA } from '../../data/mockData'
+import { useState } from 'react'
 import { MESES, tipoCor } from '../../utils/dateUtils'
 import { useEventModal } from '../../contexts/EventModalContext'
+import { useEventos } from '../../hooks/useEventos'
+import { useTiposEvento } from '../../hooks/useTiposEvento'
 import CalendarMonth from '../../components/organisms/CalendarMonth/CalendarMonth'
 import CalendarList from '../../components/organisms/CalendarList/CalendarList'
 import CalendarAgenda from '../../components/organisms/CalendarAgenda/CalendarAgenda'
 
 export default function Calendar() {
   const { openEvent } = useEventModal()
-  const [ym, setYm] = useState({ y: 2026, m: 4 })
+  const [ym, setYm] = useState(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth() } })
   const [view, setView] = useState('month')
+
+  const { data: eventos = [] } = useEventos()
+  const { data: tiposEvento = [] } = useTiposEvento()
 
   function shift(n) {
     const d = new Date(ym.y, ym.m + n, 1)
@@ -37,17 +41,17 @@ export default function Calendar() {
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button className="icon-btn" onClick={() => shift(-1)} aria-label="Mês anterior">‹</button>
-            <button className="icon-btn" onClick={() => setYm({ y: 2026, m: 4 })}>Hoje</button>
+            <button className="icon-btn" onClick={() => { const d = new Date(); setYm({ y: d.getFullYear(), m: d.getMonth() }) }}>Hoje</button>
             <button className="icon-btn" onClick={() => shift(1)} aria-label="Próximo mês">›</button>
           </div>
         </div>
 
-        {view === 'month'  && <CalendarMonth year={ym.y} month={ym.m} onPick={openEvent} />}
-        {view === 'list'   && <CalendarList onPick={openEvent} />}
-        {view === 'agenda' && <CalendarAgenda onPick={openEvent} />}
+        {view === 'month'  && <CalendarMonth year={ym.y} month={ym.m} onPick={openEvent} eventos={eventos} />}
+        {view === 'list'   && <CalendarList onPick={openEvent} eventos={eventos} />}
+        {view === 'agenda' && <CalendarAgenda onPick={openEvent} eventos={eventos} />}
 
         <div className="legend">
-          {DATA.tiposEvento.map(t => (
+          {tiposEvento.map(t => (
             <span key={t.id}>
               <span className="dot" style={{ background: tipoCor(t.id) }} />
               {t.nome}

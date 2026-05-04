@@ -1,18 +1,21 @@
 import { useState } from 'react'
-import { DATA } from '../../data/mockData'
+import { useOracoes } from '../../hooks/useOracoes'
 import PrayerItem from '../../components/molecules/PrayerItem/PrayerItem'
 import styles from './Prayer.module.css'
 
 export default function Prayer() {
-  const [items, setItems] = useState(DATA.oracoes)
+  const { data: oracoesBase = [] } = useOracoes()
+  const [local, setLocal] = useState([])
   const [form, setForm] = useState({ nome: '', pedido: '', publico: true })
+
+  const items = [...local, ...oracoesBase]
 
   function submit(e) {
     e.preventDefault()
     if (!form.pedido.trim()) return
-    setItems([
+    setLocal(prev => [
       { id: Date.now(), pessoaNome: form.nome || 'Anônimo', pedido: form.pedido, data: new Date().toISOString(), publico: form.publico },
-      ...items,
+      ...prev,
     ])
     setForm({ nome: '', pedido: '', publico: true })
   }

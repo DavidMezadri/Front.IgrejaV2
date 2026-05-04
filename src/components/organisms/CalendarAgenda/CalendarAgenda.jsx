@@ -1,12 +1,11 @@
 import { useMemo } from 'react'
-import { DATA } from '../../../data/mockData'
 import { MESES_CURTO, fmtHora, tipoCor } from '../../../utils/dateUtils'
 import styles from './CalendarAgenda.module.css'
 
-export default function CalendarAgenda({ onPick }) {
+export default function CalendarAgenda({ onPick, eventos = [] }) {
   const grupos = useMemo(() => {
     const m = new Map()
-    ;[...DATA.eventos]
+    ;[...eventos]
       .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
       .forEach(e => {
         const d = new Date(e.dataInicio)
