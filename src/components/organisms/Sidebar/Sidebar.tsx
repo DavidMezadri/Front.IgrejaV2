@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../contexts/AuthContext'
 import NavItem from '../../molecules/NavItem/NavItem'
 import * as Icons from '../../atoms/Icon/Icon'
 import styles from './Sidebar.module.css'
@@ -17,15 +18,26 @@ const GROUPS = [
     { to: "/sermoes",     label: "Sermões",         icon: Icons.PlayIcon },
     { to: "/biblia",      label: "Bíblia",          icon: Icons.BookIcon },
   ]},
-  { title: "Conta", items: [
-    { to: "/login", label: "Entrar",        icon: Icons.LoginIcon },
-    { to: "/admin", label: "Painel admin",  icon: Icons.SettingsIcon },
-  ]},
 ]
 
 export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
   const [open, setOpen] = useState(false)
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
   const close = () => setOpen(false)
+
+  async function handleLogout() {
+    await logout()
+    navigate('/inicio')
+    close()
+  }
+
+  const accountItems = isAuthenticated ? [
+    { to: "/oracao", label: "🙏 Pedir Oração", icon: Icons.HeartIcon, hidden: false },
+    { label: "Sair", icon: Icons.LogoutIcon, onClick: handleLogout, isDanger: true },
+  ] : [
+    { to: "/login", label: "Entrar", icon: Icons.LoginIcon },
+  ]
 
   return (
     <>
@@ -42,6 +54,14 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
           </span>
         </Link>
 
+        {isAuthenticated && user && (
+          <div className={styles.userSection}>
+            <div className={styles.userAvatar}>👤</div>
+            <div className={styles.userName}>{user.nome || user.username}</div>
+            <div className={styles.userRole}>{user.role === 'admin' ? 'Administrador' : 'Membro'}</div>
+          </div>
+        )}
+
         <nav className={styles.nav}>
           {GROUPS.map(g => (
             <div className={styles.group} key={g.title}>
@@ -53,6 +73,26 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
               ))}
             </div>
           ))}
+
+          <div className={styles.group}>
+            <div className={styles.groupTitle}>Conta</div>
+            {accountItems.map((item, idx) => (
+              item.to ? (
+                <NavItem key={item.to} to={item.to} icon={item.icon} onClick={close}>
+                  {item.label}
+                </NavItem>
+              ) : (
+                <button
+                  key={idx}
+                  className={`${styles.accountBtn} ${item.isDanger ? styles.danger : ''}`}
+                  onClick={item.onClick}
+                >
+                  <span className={styles.icon}>{item.icon ? <item.icon size={16} /> : '→'}</span>
+                  {item.label}
+                </button>
+              )
+            ))}
+          </div>
         </nav>
 
         <div className={styles.foot}>

@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useTheme } from './hooks/useTheme'
 import { EventModalProvider } from './contexts/EventModalContext'
 import PageLayout from './components/templates/PageLayout/PageLayout'
+import AdminLayout from './components/templates/AdminLayout/AdminLayout'
 import Home from './pages/Home/Home'
 import Calendar from './pages/Calendar/Calendar'
 import Weekly from './pages/Weekly/Weekly'
@@ -11,7 +12,14 @@ import Bible from './pages/Bible/Bible'
 import Announcements from './pages/Announcements/Announcements'
 import Prayer from './pages/Prayer/Prayer'
 import Login from './pages/Login/Login'
-import Admin from './pages/Admin/Admin'
+import Signup from './pages/Signup/Signup'
+import AdminHome from './pages/Admin/AdminHome'
+import AdminEndpoints from './pages/Admin/AdminEndpoints'
+import AdminPessoas from './pages/Admin/AdminPessoas'
+import AdminFamilias from './pages/Admin/AdminFamilias'
+import AdminEventos from './pages/Admin/AdminEventos'
+import AdminUsuarios from './pages/Admin/AdminUsuarios'
+import AdminConfiguracoes from './pages/Admin/AdminConfiguracoes'
 
 export default function App() {
   const { theme, toggleTheme } = useTheme()
@@ -20,6 +28,18 @@ export default function App() {
     <EventModalProvider>
       <HashRouter>
         <Routes>
+          {/* Rotas do Admin */}
+          <Route path="/admin/*" element={<AdminLayout theme={theme} toggleTheme={toggleTheme} />}>
+            <Route index element={<AdminHome />} />
+            <Route path="endpoints" element={<AdminEndpoints />} />
+            <Route path="pessoas" element={<AdminPessoas />} />
+            <Route path="familias" element={<AdminFamilias />} />
+            <Route path="eventos" element={<AdminEventos />} />
+            <Route path="usuarios" element={<AdminUsuarios />} />
+            <Route path="configuracoes" element={<AdminConfiguracoes />} />
+          </Route>
+
+          {/* Rotas do Site Normal */}
           <Route path="/" element={<PageLayout theme={theme} toggleTheme={toggleTheme} />}>
             <Route index element={<Navigate to="/inicio" replace />} />
             <Route path="inicio"      element={<Home />} />
@@ -31,7 +51,7 @@ export default function App() {
             <Route path="avisos"      element={<Announcements />} />
             <Route path="oracao"      element={<Prayer />} />
             <Route path="login"       element={<Login />} />
-            <Route path="admin"       element={<Admin />} />
+            <Route path="cadastro"    element={<Signup />} />
           </Route>
         </Routes>
       </HashRouter>

@@ -1,0 +1,149 @@
+.tableContainer {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.formCard {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  margin-bottom: 28px;
+}
+
+.formCard h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formGroup label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--fg-muted);
+  box-shadow: 0 0 0 2px oklch(0.18 0.01 60 / 0.08);
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.formActions button {
+  flex: 1;
+}
+
+.statusBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusBtn:hover {
+  transform: scale(1.05);
+}
+
+.actionBtn {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.actionBtn:hover {
+  border-color: var(--fg-muted);
+  background: var(--surface-muted);
+  color: var(--fg);
+}
+
+.actionBtn.danger {
+  color: var(--accent);
+  border-color: color-mix(in oklch, var(--accent) 30%, var(--line));
+}
+
+.actionBtn.danger:hover {
+  border-color: var(--accent);
+  background: oklch(0.18 0.01 60 / 0.08);
+  color: var(--accent);
+}
+
+.info {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--surface);
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+}
+
+.info p {
+  margin: 0;
+}
+
+.info b {
+  color: var(--fg);
+  font-weight: 600;
+}

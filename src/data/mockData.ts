@@ -1,7 +1,109 @@
-const dt = (y, m, d, h = 0, min = 0) => new Date(y, m - 1, d, h, min).toISOString()
-const Y = 2026, M = 5
+const dt = (y: number, m: number, d: number, h: number = 0, min: number = 0): string =>
+  new Date(y, m - 1, d, h, min).toISOString()
 
-const tiposEvento = [
+const Y = 2026
+const M = 5
+
+interface TipoEvento {
+  id: number
+  nome: string
+  descricao: string
+  publicoAlvo: number
+  requerPresenca: boolean
+  ativo: boolean
+}
+
+interface Evento {
+  id: number
+  nome: string
+  descricao: string
+  tipoEventoId: number
+  tipoEventoNome: string
+  dataInicio: string
+  dataFim: string
+  local: string
+  capacidadeMaxima: number
+  requerInscricao: boolean
+  ativo: boolean
+  dataCriacao: string
+}
+
+interface Aviso {
+  id: number
+  titulo: string
+  resumo: string
+  data: string
+  categoria: string
+}
+
+interface Oracao {
+  id: number
+  pessoaNome: string
+  pedido: string
+  data: string
+  publico: boolean
+}
+
+interface Sermao {
+  id: number
+  titulo: string
+  pregador: string
+  serie: string
+  data: string
+  duracao: string
+  referencia: string
+}
+
+interface Ministerio {
+  id: number
+  nome: string
+  lider: string
+  encontro: string
+  descricao: string
+}
+
+interface ItemSemanal {
+  hora: string
+  titulo: string
+  local: string
+}
+
+interface Dia {
+  dia: string
+  itens: ItemSemanal[]
+}
+
+interface Pessoa {
+  id: number
+  nome: string
+  email: string
+  membroDesde: string
+  familiaId: number | null
+  ativo: boolean
+}
+
+interface Familia {
+  id: number
+  nome: string
+  responsavelNome: string
+  totalMembros: number
+  ativo: boolean
+}
+
+interface Versiculo {
+  referencia: string
+  texto: string
+}
+
+interface Igreja {
+  nome: string
+  lema: string
+  endereco: string
+  telefone: string
+  email: string
+}
+
+const tiposEvento: TipoEvento[] = [
   { id: 1, nome: "Culto de Celebração", descricao: "Culto público dominical", publicoAlvo: 0, requerPresenca: false, ativo: true },
   { id: 2, nome: "Culto de Oração", descricao: "Encontro semanal de intercessão", publicoAlvo: 0, requerPresenca: true, ativo: true },
   { id: 3, nome: "Estudo Bíblico", descricao: "Estudo das Escrituras", publicoAlvo: 4, requerPresenca: true, ativo: true },
@@ -12,7 +114,7 @@ const tiposEvento = [
   { id: 8, nome: "Café com Idosos", descricao: "Comunhão da terceira idade", publicoAlvo: 5, requerPresenca: true, ativo: true },
 ]
 
-const eventos = [
+const eventos: Evento[] = [
   { id: 1,  nome: "Culto de Celebração", descricao: 'Pregação: Pr. Daniel Almeida — "A graça que sustenta".', tipoEventoId: 1, tipoEventoNome: "Culto de Celebração", dataInicio: dt(Y,M,3,9,0),   dataFim: dt(Y,M,3,11,0),  local: "Templo principal",       capacidadeMaxima: 600, requerInscricao: false, ativo: true, dataCriacao: dt(Y,4,1) },
   { id: 2,  nome: "Culto de Celebração — Noite", descricao: 'Pregação: Pra. Helena Costa — "Servir como Cristo serviu".', tipoEventoId: 1, tipoEventoNome: "Culto de Celebração", dataInicio: dt(Y,M,3,19,0), dataFim: dt(Y,M,3,21,0), local: "Templo principal", capacidadeMaxima: 600, requerInscricao: false, ativo: true, dataCriacao: dt(Y,4,1) },
   { id: 3,  nome: "Escola Dominical", descricao: "Classes por idade. Tema do trimestre: Cartas de Paulo.", tipoEventoId: 5, tipoEventoNome: "Escola Dominical", dataInicio: dt(Y,M,3,8,0), dataFim: dt(Y,M,3,8,50), local: "Salas de aula", capacidadeMaxima: 200, requerInscricao: false, ativo: true, dataCriacao: dt(Y,4,1) },
@@ -39,21 +141,21 @@ const eventos = [
   { id: 24, nome: "Culto de Celebração", descricao: "Último domingo do mês.", tipoEventoId: 1, tipoEventoNome: "Culto de Celebração", dataInicio: dt(Y,M,31,9,0), dataFim: dt(Y,M,31,11,0), local: "Templo principal", capacidadeMaxima: 600, requerInscricao: false, ativo: true, dataCriacao: dt(Y,4,1) },
 ]
 
-const avisos = [
+const avisos: Aviso[] = [
   { id: 1, titulo: "Inscrições abertas — Retiro de Casais", resumo: "22 a 24 de maio, em Atibaia. Vagas limitadas.", data: dt(Y,4,28), categoria: "Inscrição" },
   { id: 2, titulo: "Campanha do agasalho", resumo: "Doações até 31 de maio na recepção do templo.", data: dt(Y,4,25), categoria: "Ação social" },
   { id: 3, titulo: "Nova série de estudos: Romanos", resumo: "Toda 5ª-feira às 20h, na sala de estudos.", data: dt(Y,4,20), categoria: "Estudo" },
   { id: 4, titulo: "Mudança no horário do culto de oração", resumo: "A partir de junho, passará a iniciar às 19h30.", data: dt(Y,4,18), categoria: "Aviso geral" },
 ]
 
-const oracoes = [
+const oracoes: Oracao[] = [
   { id: 1, pessoaNome: "Marina S.", pedido: "Tratamento de saúde da minha mãe — força e fé.", data: dt(Y,4,29), publico: true },
   { id: 2, pessoaNome: "Equipe Pastoral", pedido: "Pelo retiro de casais e pelas famílias inscritas.", data: dt(Y,4,28), publico: true },
   { id: 3, pessoaNome: "Anônimo", pedido: "Direção espiritual em uma decisão importante.", data: dt(Y,4,27), publico: true },
   { id: 4, pessoaNome: "Lucas R.", pedido: "Por uma nova oportunidade profissional.", data: dt(Y,4,26), publico: true },
 ]
 
-const sermoes = [
+const sermoes: Sermao[] = [
   { id: 1, titulo: "A graça que sustenta", pregador: "Pr. Daniel Almeida", serie: "Cartas de Paulo", data: dt(Y,4,26), duracao: "42 min", referencia: "Romanos 5" },
   { id: 2, titulo: "Servir como Cristo serviu", pregador: "Pra. Helena Costa", serie: "Avulso", data: dt(Y,4,19), duracao: "38 min", referencia: "Filipenses 2" },
   { id: 3, titulo: "Famílias firmadas", pregador: "Pr. Daniel Almeida", serie: "Avulso", data: dt(Y,4,12), duracao: "44 min", referencia: "Efésios 5" },
@@ -62,7 +164,7 @@ const sermoes = [
   { id: 6, titulo: "A aliança em Cristo", pregador: "Pr. Daniel Almeida", serie: "Cartas de Paulo", data: dt(Y,3,21), duracao: "43 min", referencia: "Hebreus 8" },
 ]
 
-const ministerios = [
+const ministerios: Ministerio[] = [
   { id: 1, nome: "Louvor & Adoração", lider: "Mariana Lopes", encontro: "Quartas, 20h", descricao: "Equipe de músicos, vocais e técnica para os cultos." },
   { id: 2, nome: "Juventude (JOIA)", lider: "Pedro Vargas", encontro: "Sábados, 19h30", descricao: "Encontros semanais, comunhão e missão para jovens 15–29." },
   { id: 3, nome: "Infantil (Kids)", lider: "Aline Ferreira", encontro: "Domingos, 9h", descricao: "Ensino bíblico para crianças de 3 a 11 anos." },
@@ -71,7 +173,7 @@ const ministerios = [
   { id: 6, nome: "Intercessão", lider: "Cláudia Rangel", encontro: "Diário (online)", descricao: "Rede de oração da congregação." },
 ]
 
-const semanal = [
+const semanal: Dia[] = [
   { dia: "Domingo", itens: [
     { hora: "08:00", titulo: "Escola Dominical", local: "Salas" },
     { hora: "09:00", titulo: "Culto manhã", local: "Templo" },
@@ -82,7 +184,7 @@ const semanal = [
   { dia: "Sábado",  itens: [{ hora: "19:30", titulo: "Ministério Jovem (JOIA)", local: "Anexo" }] },
 ]
 
-const pessoas = [
+const pessoas: Pessoa[] = [
   { id: 1, nome: "Daniel Almeida",  email: "daniel@igreja.org", membroDesde: "2003-08-10", familiaId: 1, ativo: true },
   { id: 2, nome: "Joana Almeida",   email: "joana@igreja.org",  membroDesde: "2003-08-10", familiaId: 1, ativo: true },
   { id: 3, nome: "Helena Costa",    email: "helena@igreja.org", membroDesde: "2010-02-20", familiaId: 2, ativo: true },
@@ -91,19 +193,19 @@ const pessoas = [
   { id: 6, nome: "Pedro Vargas",    email: "pedro@igreja.org",  membroDesde: "2010-04-12", familiaId: 4, ativo: true },
 ]
 
-const familias = [
+const familias: Familia[] = [
   { id: 1, nome: "Família Almeida", responsavelNome: "Daniel Almeida", totalMembros: 4, ativo: true },
   { id: 2, nome: "Família Costa",   responsavelNome: "Helena Costa",   totalMembros: 3, ativo: true },
   { id: 3, nome: "Família Souza",   responsavelNome: "Marina Souza",   totalMembros: 2, ativo: true },
   { id: 4, nome: "Família Vargas",  responsavelNome: "Pedro Vargas",   totalMembros: 3, ativo: true },
 ]
 
-const versiculoDoDia = {
+const versiculoDoDia: Versiculo = {
   referencia: "Salmos 23:1",
   texto: "O Senhor é o meu pastor; nada me faltará.",
 }
 
-const igreja = {
+const igreja: Igreja = {
   nome: "Comunidade da Graça",
   lema: "Uma igreja para a cidade.",
   endereco: "Rua das Acácias, 248 — Centro, São Paulo/SP",

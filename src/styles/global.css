@@ -89,6 +89,9 @@ section.block { padding: 88px 0; border-bottom: 1px solid var(--line); }
   border: 1px solid var(--line); color: var(--fg-muted); background: var(--surface);
 }
 .badge.ok { color: var(--ok); border-color: color-mix(in oklch, var(--ok) 30%, var(--line)); }
+.badge.danger { color: var(--accent); border-color: color-mix(in oklch, var(--accent) 30%, var(--line)); }
+.badge.warning { color: #d4a500; border-color: color-mix(in oklch, #d4a500 30%, var(--line)); }
+.badge.info { color: #0084ff; border-color: color-mix(in oklch, #0084ff 30%, var(--line)); }
 
 /* Controls */
 .tabs {

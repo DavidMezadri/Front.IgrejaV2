@@ -1,22 +1,31 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import styles from './Login.module.css'
+
+interface LoginFields {
+  username: string
+  password: string
+}
 
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [fields, setFields] = useState({ username: '', password: '' })
+  const [fields, setFields] = useState<LoginFields>({ username: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function submit(e) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      await login(fields.username, fields.password)
-      navigate('/admin')
+      const usuario = await login(fields.username, fields.password)
+      // Aguarda um frame antes de navegar para garantir que o contexto foi atualizado
+      // Redireciona baseado no tipoUsuario (0 = Administrador)
+      setTimeout(() => {
+        navigate(usuario?.tipoUsuario === 0 || usuario?.tipoUsuario === 'Administrador' ? '/admin' : '/inicio')
+      }, 50)
     } catch {
       setError('Usuário ou senha incorretos.')
     } finally {
@@ -53,7 +62,7 @@ export default function Login() {
             {loading ? 'Entrando…' : <>Entrar <span className="arrow" /></>}
           </button>
           <div className={styles.alt}>
-            <a href="#">Esqueci minha senha</a> · <a href="#/admin">Acesso admin</a>
+            Novo por aqui? <Link to="/cadastro">Cadastre-se</Link> · <a href="#/admin">Acesso admin</a>
           </div>
         </form>
       </div>

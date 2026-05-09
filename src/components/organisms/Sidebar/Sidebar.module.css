@@ -21,12 +21,31 @@
 .brandName { font-size: 15px; font-weight: 600; color: var(--fg); }
 .brandSub { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-muted); }
 
+.userSection {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12px; border-radius: 8px; background: var(--surface-muted);
+  border: 1px solid var(--line);
+}
+.userAvatar { font-size: 32px; }
+.userName { font-size: 14px; font-weight: 600; color: var(--fg); text-align: center; }
+.userRole { font-size: 11px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
 .nav { display: flex; flex-direction: column; gap: 22px; flex: 1; }
 .group {}
 .groupTitle {
   font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--fg-muted); padding: 0 12px; margin-bottom: 8px;
 }
+
+.accountBtn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 6px;
+  border: none; background: transparent; color: var(--fg); font-size: 13px;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.accountBtn:hover { background: var(--surface-muted); }
+.accountBtn.danger { color: var(--accent); }
+.accountBtn.danger:hover { background: oklch(0.18 0.01 60 / 0.08); }
 
 .foot { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 14px; }
 .themeBtn {
