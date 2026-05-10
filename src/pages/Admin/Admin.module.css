@@ -171,3 +171,88 @@
   color: var(--fg-muted); border-top: 0;
 }
 .table tr:hover td { background: color-mix(in oklch, var(--surface) 40%, transparent); }
+
+/* Tabela e Ações — classes compartilhadas */
+.tableContainer {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.actionsCell {
+  text-align: right;
+}
+
+.actionBtn {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.actionBtn:hover {
+  border-color: var(--fg-muted);
+  background: var(--surface-muted);
+  color: var(--fg);
+}
+
+.actionBtn.danger {
+  color: var(--accent);
+  border-color: color-mix(in oklch, var(--accent) 30%, var(--line));
+}
+
+.actionBtn.danger:hover {
+  border-color: var(--accent);
+  background: oklch(0.18 0.01 60 / 0.08);
+  color: var(--accent);
+}
+
+.statusBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusBtn:hover {
+  transform: scale(1.05);
+}
+
+.info {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--surface);
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.info p {
+  margin: 0;
+}
+
+.info b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.alert-success {
+  padding: 12px 14px;
+  margin-top: 16px;
+  background-color: rgba(34, 197, 94, 0.1);
+  border-left: 4px solid rgb(34, 197, 94);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-size: 14px;
+}

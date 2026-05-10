@@ -1,18 +1,18 @@
 import { useState } from 'react'
+import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
-import endpointStyles from './AdminEndpoints.module.css'
 
-const ICON_MAP = {
-  GET: Icons.DatabaseIcon,
-  POST: Icons.DatabaseIcon,
-  PUT: Icons.DatabaseIcon,
-  DELETE: Icons.TrashIcon,
-  PATCH: Icons.EditIcon
+interface Endpoint {
+  id?: number
+  nome: string
+  metodo: string
+  url: string
+  ativo: boolean
 }
 
-const INITIAL_ENDPOINTS = [
+const INITIAL_ENDPOINTS: Endpoint[] = [
   { id: 1, nome: 'Listar Pessoas', metodo: 'GET', url: '/api/pessoas', ativo: true },
   { id: 2, nome: 'Criar Pessoa', metodo: 'POST', url: '/api/pessoas', ativo: true },
   { id: 3, nome: 'Atualizar Pessoa', metodo: 'PUT', url: '/api/pessoas/:id', ativo: true },
@@ -20,20 +20,33 @@ const INITIAL_ENDPOINTS = [
   { id: 5, nome: 'Listar Eventos', metodo: 'GET', url: '/api/eventos', ativo: true },
 ]
 
-const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+const HTTP_METHODS = [
+  { id: 'GET', nome: 'GET' },
+  { id: 'POST', nome: 'POST' },
+  { id: 'PUT', nome: 'PUT' },
+  { id: 'DELETE', nome: 'DELETE' },
+  { id: 'PATCH', nome: 'PATCH' },
+]
+
+const FORM_FIELDS: FormField[] = [
+  { name: 'nome', label: 'Nome do Endpoint', type: 'text', required: true },
+  { name: 'metodo', label: 'Método HTTP', type: 'select', options: HTTP_METHODS },
+  { name: 'url', label: 'URL da API', type: 'text', required: true },
+  { name: 'ativo', label: 'Ativo', type: 'checkbox' },
+]
 
 export default function AdminEndpoints() {
-  const [endpoints, setEndpoints] = useState(INITIAL_ENDPOINTS)
+  const [endpoints, setEndpoints] = useState<Endpoint[]>(INITIAL_ENDPOINTS)
   const [showForm, setShowForm] = useState(false)
-  const [editingId, setEditingId] = useState(null)
-  const [form, setForm] = useState({ nome: '', metodo: 'GET', url: '', ativo: true })
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<Endpoint>({ nome: '', metodo: 'GET', url: '', ativo: true })
 
   function resetForm() {
     setForm({ nome: '', metodo: 'GET', url: '', ativo: true })
     setEditingId(null)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.nome || !form.url) {
       alert('Preencha todos os campos')
@@ -44,7 +57,7 @@ export default function AdminEndpoints() {
       setEndpoints(endpoints.map(ep => ep.id === editingId ? { ...ep, ...form } : ep))
     } else {
       const newEndpoint = {
-        id: Math.max(...endpoints.map(ep => ep.id), 0) + 1,
+        id: Math.max(...endpoints.map(ep => ep.id || 0), 0) + 1,
         ...form
       }
       setEndpoints([...endpoints, newEndpoint])
@@ -53,26 +66,26 @@ export default function AdminEndpoints() {
     setShowForm(false)
   }
 
-  function handleEdit(endpoint) {
+  function handleEdit(endpoint: Endpoint) {
     setForm(endpoint)
-    setEditingId(endpoint.id)
+    setEditingId(endpoint.id || null)
     setShowForm(true)
     window.scrollTo(0, 0)
   }
 
-  function handleDelete(id) {
+  function handleDelete(id: number) {
     if (confirm('Tem certeza que deseja deletar este endpoint?')) {
       setEndpoints(endpoints.filter(ep => ep.id !== id))
     }
   }
 
-  function toggleAtivo(id) {
+  function toggleAtivo(id: number) {
     setEndpoints(endpoints.map(ep =>
       ep.id === id ? { ...ep, ativo: !ep.ativo } : ep
     ))
   }
 
-  const methodColor = {
+  const methodColor: Record<string, string> = {
     GET: 'ok',
     POST: 'info',
     PUT: 'warning',
@@ -99,76 +112,19 @@ export default function AdminEndpoints() {
       </div>
 
       {showForm && (
-        <div className={endpointStyles.formCard}>
-          <h3>{editingId ? 'Editar Endpoint' : 'Novo Endpoint'}</h3>
-          <form onSubmit={handleSubmit} className={endpointStyles.form}>
-            <div className={endpointStyles.formGroup}>
-              <label>Nome do Endpoint</label>
-              <input
-                type="text"
-                value={form.nome}
-                onChange={e => setForm({ ...form, nome: e.target.value })}
-                placeholder="Ex: Listar Pessoas"
-                required
-              />
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>Método HTTP</label>
-                <select
-                  value={form.metodo}
-                  onChange={e => setForm({ ...form, metodo: e.target.value })}
-                >
-                  {HTTP_METHODS.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>URL da API</label>
-                <input
-                  type="text"
-                  value={form.url}
-                  onChange={e => setForm({ ...form, url: e.target.value })}
-                  placeholder="Ex: /api/pessoas"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={form.ativo}
-                  onChange={e => setForm({ ...form, ativo: e.target.checked })}
-                />
-                Ativo
-              </label>
-            </div>
-
-            <div className={endpointStyles.formActions}>
-              <button type="submit" className="btn btn-primary">
-                {editingId ? 'Atualizar' : 'Adicionar'}
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={() => {
-                  resetForm()
-                  setShowForm(false)
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+        <GenericForm
+          title={editingId ? 'Editar Endpoint' : 'Novo Endpoint'}
+          fields={FORM_FIELDS}
+          values={form}
+          onValueChange={(updates) => setForm({ ...form, ...updates })}
+          onSubmit={handleSubmit}
+          onCancel={() => { resetForm(); setShowForm(false) }}
+          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
+          isEditing={!!editingId}
+        />
       )}
 
-      <div className={endpointStyles.tableContainer}>
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -176,7 +132,7 @@ export default function AdminEndpoints() {
               <th>Método</th>
               <th>URL</th>
               <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th className={styles.actionsCell}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -191,8 +147,8 @@ export default function AdminEndpoints() {
                 <td><code style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{endpoint.url}</code></td>
                 <td>
                   <button
-                    className={endpointStyles.statusBtn}
-                    onClick={() => toggleAtivo(endpoint.id)}
+                    className={styles.statusBtn}
+                    onClick={() => toggleAtivo(endpoint.id || 0)}
                     title={endpoint.ativo ? 'Desativar' : 'Ativar'}
                   >
                     <Badge variant={endpoint.ativo ? 'ok' : 'danger'}>
@@ -200,17 +156,17 @@ export default function AdminEndpoints() {
                     </Badge>
                   </button>
                 </td>
-                <td style={{ textAlign: 'right' }}>
+                <td className={styles.actionsCell}>
                   <button
-                    className={endpointStyles.actionBtn}
+                    className={styles.actionBtn}
                     onClick={() => handleEdit(endpoint)}
                     title="Editar"
                   >
                     <Icons.EditIcon size={16} />
                   </button>
                   <button
-                    className={`${endpointStyles.actionBtn} ${endpointStyles.danger}`}
-                    onClick={() => handleDelete(endpoint.id)}
+                    className={`${styles.actionBtn} ${styles.danger}`}
+                    onClick={() => handleDelete(endpoint.id || 0)}
                     title="Deletar"
                   >
                     <Icons.TrashIcon size={16} />
@@ -222,7 +178,7 @@ export default function AdminEndpoints() {
         </table>
       </div>
 
-      <div className={endpointStyles.info}>
+      <div className={styles.info}>
         <p><b>Total:</b> {endpoints.length} endpoints cadastrados</p>
         <p><b>Ativos:</b> {endpoints.filter(ep => ep.ativo).length}</p>
       </div>

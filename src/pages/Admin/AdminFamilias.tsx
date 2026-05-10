@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react'
 import familiasService from '../../services/familiasService'
-import pessoasService from '../../services/pessoasService'
+import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
-import endpointStyles from './AdminEndpoints.module.css'
+
+interface Familia {
+  id?: number
+  nomeFamilia: string
+  observacoes: string
+  membros?: any[]
+}
+
+const FORM_FIELDS: FormField[] = [
+  { name: 'nomeFamilia', label: 'Nome da Família', type: 'text', required: true },
+  { name: 'observacoes', label: 'Observações', type: 'textarea' },
+]
 
 export default function AdminFamilias() {
-  const [familias, setFamilias] = useState([])
+  const [familias, setFamilias] = useState<Familia[]>([])
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  const [editingId, setEditingId] = useState(null)
-  const [form, setForm] = useState({ nomeFamilia: '', observacoes: '' })
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<Familia>({ nomeFamilia: '', observacoes: '' })
 
   useEffect(() => {
     carregarDados()
@@ -33,7 +44,7 @@ export default function AdminFamilias() {
     setEditingId(null)
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.nomeFamilia) {
       alert('Preencha o nome da família')
@@ -55,7 +66,7 @@ export default function AdminFamilias() {
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id: number) {
     if (confirm('Tem certeza?')) {
       try {
         await familiasService.remove(id)
@@ -66,13 +77,13 @@ export default function AdminFamilias() {
     }
   }
 
-  function handleEdit(familia) {
+  function handleEdit(familia: Familia) {
     setForm(familia)
-    setEditingId(familia.id)
+    setEditingId(familia.id || null)
     setShowForm(true)
   }
 
-  if (loading) return <div style={{ padding: '28px' }}>Carregando...</div>
+  if (loading) return <div className="p-16">Carregando...</div>
 
   return (
     <div className={styles.section}>
@@ -93,48 +104,26 @@ export default function AdminFamilias() {
       </div>
 
       {showForm && (
-        <div className={endpointStyles.formCard}>
-          <h3>{editingId ? 'Editar Família' : 'Nova Família'}</h3>
-          <form onSubmit={handleSubmit} className={endpointStyles.form}>
-            <div className={endpointStyles.formGroup}>
-              <label>Nome da Família *</label>
-              <input
-                type="text"
-                value={form.nomeFamilia}
-                onChange={e => setForm({ ...form, nomeFamilia: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>Observações</label>
-              <textarea
-                value={form.observacoes}
-                onChange={e => setForm({ ...form, observacoes: e.target.value })}
-                rows="3"
-              />
-            </div>
-
-            <div className={endpointStyles.formActions}>
-              <button type="submit" className="btn btn-primary">
-                {editingId ? 'Atualizar' : 'Adicionar'}
-              </button>
-              <button type="button" className="btn" onClick={() => { resetForm(); setShowForm(false) }}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+        <GenericForm
+          title={editingId ? 'Editar Família' : 'Nova Família'}
+          fields={FORM_FIELDS}
+          values={form}
+          onValueChange={(updates) => setForm({ ...form, ...updates })}
+          onSubmit={handleSubmit}
+          onCancel={() => { resetForm(); setShowForm(false) }}
+          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
+          isEditing={!!editingId}
+        />
       )}
 
-      <div className={endpointStyles.tableContainer}>
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
               <th>Nome</th>
               <th>Membros</th>
               <th>Observações</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th className={styles.actionsCell}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -143,11 +132,11 @@ export default function AdminFamilias() {
                 <td><b>{f.nomeFamilia}</b></td>
                 <td>{f.membros?.length || 0} membros</td>
                 <td>{f.observacoes || '—'}</td>
-                <td style={{ textAlign: 'right' }}>
-                  <button className={endpointStyles.actionBtn} onClick={() => handleEdit(f)} title="Editar">
+                <td className={styles.actionsCell}>
+                  <button className={styles.actionBtn} onClick={() => handleEdit(f)} title="Editar">
                     <Icons.EditIcon size={16} />
                   </button>
-                  <button className={`${endpointStyles.actionBtn} ${endpointStyles.danger}`} onClick={() => handleDelete(f.id)} title="Deletar">
+                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(f.id || 0)} title="Deletar">
                     <Icons.TrashIcon size={16} />
                   </button>
                 </td>
@@ -157,7 +146,7 @@ export default function AdminFamilias() {
         </table>
       </div>
 
-      <div className={endpointStyles.info}>
+      <div className={styles.info}>
         <p><b>Total:</b> {familias.length} famílias cadastradas</p>
       </div>
     </div>

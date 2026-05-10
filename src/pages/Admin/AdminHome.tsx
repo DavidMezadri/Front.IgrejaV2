@@ -1,6 +1,15 @@
+import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useDashboardData } from '../../hooks/useDashboardData'
 import * as Icons from '../../components/atoms/Icon/Icon'
+import {
+  PresencasUltimoCulto,
+  MediaPresencaPorEvento,
+  HistoricoCadastros,
+  PessoasPorFaltas
+} from '../../components/organisms/DashboardCharts'
 import styles from './Admin.module.css'
+import chartStyles from '../../components/organisms/DashboardCharts/DashboardCharts.module.css'
 
 const ADMIN_CARDS = [
   {
@@ -37,6 +46,17 @@ const ADMIN_CARDS = [
 
 export default function AdminHome() {
   const { user } = useAuth()
+  const {
+    ultimoCulto,
+    ultimoCultoChart,
+    mediaPresencaPorEvento,
+    historicosCadastros,
+    pessoasPorFaltasChart,
+    totalPessoas,
+    totalPresencas
+  } = useDashboardData()
+
+  const [showCharts, setShowCharts] = useState(true)
   const userName = user?.nomeUsuario || user?.nome || 'Administrador'
 
   return (
@@ -52,26 +72,122 @@ export default function AdminHome() {
         </div>
       </div>
 
-      <div className={styles.sectionHead} style={{ marginTop: '32px' }}>
-        <div>
-          <div className="eyebrow">Painel de Controle</div>
-          <h2>Gerenciamento</h2>
-        </div>
-      </div>
-
-      <div className={styles.cards}>
-        {ADMIN_CARDS.map((item, idx) => (
-          <div key={idx} className={styles.card}>
-            <div className={styles.cardIcon}>
-              <item.icon size={28} />
+      {showCharts ? (
+        <>
+          <div className={styles.sectionHead}>
+            <div>
+              <div className="eyebrow">Dashboard</div>
+              <h2>Estatísticas de Presença</h2>
             </div>
-            <div className={styles.cardContent}>
-              <h3>{item.title}</h3>
-              <p>{item.desc}</p>
-            </div>
+            <button
+              onClick={() => setShowCharts(false)}
+              style={{
+                padding: '8px 16px',
+                background: 'var(--accent)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 500
+              }}
+            >
+              Ver Gerenciamento
+            </button>
           </div>
-        ))}
-      </div>
+
+          <div className={chartStyles.statsRow}>
+            <div className={chartStyles.statCard}>
+              <div className={chartStyles.statValue}>{totalPessoas}</div>
+              <div className={chartStyles.statLabel}>Total de Pessoas</div>
+            </div>
+            <div className={chartStyles.statCard}>
+              <div className={chartStyles.statValue}>{totalPresencas}</div>
+              <div className={chartStyles.statLabel}>Total de Presenças</div>
+            </div>
+            {ultimoCulto && (
+              <div className={chartStyles.statCard}>
+                <div className={chartStyles.statValue}>
+                  {ultimoCultoChart[0].value}
+                </div>
+                <div className={chartStyles.statLabel}>Presentes no Último Culto</div>
+              </div>
+            )}
+            {mediaPresencaPorEvento.length > 0 && (
+              <div className={chartStyles.statCard}>
+                <div className={chartStyles.statValue}>
+                  {Math.round(
+                    mediaPresencaPorEvento.reduce((sum, e) => sum + e.percentual, 0) /
+                    mediaPresencaPorEvento.length
+                  )}%
+                </div>
+                <div className={chartStyles.statLabel}>Média de Presença</div>
+              </div>
+            )}
+          </div>
+
+          <div className={chartStyles.chartsGrid}>
+            {ultimoCulto && (
+              <PresencasUltimoCulto
+                data={ultimoCultoChart}
+                ultimoCulto={ultimoCulto}
+              />
+            )}
+
+            {mediaPresencaPorEvento.length > 0 && (
+              <MediaPresencaPorEvento data={mediaPresencaPorEvento} />
+            )}
+
+            <div className={chartStyles.chartsFullWidth}>
+              <HistoricoCadastros data={historicosCadastros} />
+            </div>
+
+            {pessoasPorFaltasChart.length > 0 && (
+              <div className={chartStyles.chartsFullWidth}>
+                <PessoasPorFaltas data={pessoasPorFaltasChart} />
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles.sectionHead} style={{ marginTop: '32px' }}>
+            <div>
+              <div className="eyebrow">Painel de Controle</div>
+              <h2>Gerenciamento</h2>
+            </div>
+            <button
+              onClick={() => setShowCharts(true)}
+              style={{
+                padding: '8px 16px',
+                background: 'var(--accent)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 500
+              }}
+            >
+              Ver Dashboard
+            </button>
+          </div>
+
+          <div className={styles.cards}>
+            {ADMIN_CARDS.map((item, idx) => (
+              <div key={idx} className={styles.card}>
+                <div className={styles.cardIcon}>
+                  <item.icon size={28} />
+                </div>
+                <div className={styles.cardContent}>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }

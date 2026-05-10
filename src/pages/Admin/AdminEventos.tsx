@@ -1,18 +1,34 @@
 import { useState, useEffect } from 'react'
 import eventosService from '../../services/eventosService'
 import tiposEventoService from '../../services/tiposEventoService'
+import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
-import endpointStyles from './AdminEndpoints.module.css'
+
+interface Evento {
+  id?: number
+  nome: string
+  descricao: string
+  dataInicio: string
+  dataFim: string
+  local: string
+  tipoEventoId: string
+  ativo: boolean
+}
+
+interface TipoEvento {
+  id: string | number
+  nome: string
+}
 
 export default function AdminEventos() {
-  const [eventos, setEventos] = useState([])
-  const [tipos, setTipos] = useState([])
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [tipos, setTipos] = useState<TipoEvento[]>([])
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  const [editingId, setEditingId] = useState(null)
-  const [form, setForm] = useState({
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<Evento>({
     nome: '',
     descricao: '',
     dataInicio: '',
@@ -21,6 +37,16 @@ export default function AdminEventos() {
     tipoEventoId: '',
     ativo: true
   })
+
+  const FORM_FIELDS: FormField[] = [
+    { name: 'nome', label: 'Nome', type: 'text', required: true },
+    { name: 'descricao', label: 'Descrição', type: 'textarea' },
+    { name: 'dataInicio', label: 'Data de Início', type: 'datetime-local', required: true },
+    { name: 'dataFim', label: 'Data de Fim', type: 'datetime-local' },
+    { name: 'local', label: 'Local', type: 'text' },
+    { name: 'tipoEventoId', label: 'Tipo de Evento', type: 'select', options: tipos },
+    { name: 'ativo', label: 'Ativo', type: 'checkbox' },
+  ]
 
   useEffect(() => {
     carregarDados()
@@ -47,7 +73,7 @@ export default function AdminEventos() {
     setEditingId(null)
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.nome || !form.dataInicio) {
       alert('Preencha os campos obrigatórios')
@@ -69,7 +95,7 @@ export default function AdminEventos() {
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id: number) {
     if (confirm('Tem certeza?')) {
       try {
         await eventosService.remove(id)
@@ -80,16 +106,16 @@ export default function AdminEventos() {
     }
   }
 
-  function handleEdit(evento) {
+  function handleEdit(evento: Evento) {
     setForm(evento)
-    setEditingId(evento.id)
+    setEditingId(evento.id || null)
     setShowForm(true)
   }
 
-  const getTipoName = (id) => tipos.find(t => t.id === id)?.nome || '—'
-  const formatData = (data) => new Date(data).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  const getTipoName = (id: string | number | undefined) => tipos.find(t => t.id === id)?.nome || '—'
+  const formatData = (data: string) => new Date(data).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' })
 
-  if (loading) return <div style={{ padding: '28px' }}>Carregando...</div>
+  if (loading) return <div className="p-16">Carregando...</div>
 
   return (
     <div className={styles.section}>
@@ -110,97 +136,19 @@ export default function AdminEventos() {
       </div>
 
       {showForm && (
-        <div className={endpointStyles.formCard}>
-          <h3>{editingId ? 'Editar Evento' : 'Novo Evento'}</h3>
-          <form onSubmit={handleSubmit} className={endpointStyles.form}>
-            <div className={endpointStyles.formGroup}>
-              <label>Nome *</label>
-              <input
-                type="text"
-                value={form.nome}
-                onChange={e => setForm({ ...form, nome: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>Descrição</label>
-              <textarea
-                value={form.descricao}
-                onChange={e => setForm({ ...form, descricao: e.target.value })}
-                rows="2"
-              />
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>Data de Início *</label>
-                <input
-                  type="datetime-local"
-                  value={form.dataInicio}
-                  onChange={e => setForm({ ...form, dataInicio: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>Data de Fim</label>
-                <input
-                  type="datetime-local"
-                  value={form.dataFim}
-                  onChange={e => setForm({ ...form, dataFim: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>Local</label>
-                <input
-                  type="text"
-                  value={form.local}
-                  onChange={e => setForm({ ...form, local: e.target.value })}
-                />
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>Tipo de Evento</label>
-                <select
-                  value={form.tipoEventoId}
-                  onChange={e => setForm({ ...form, tipoEventoId: e.target.value })}
-                >
-                  <option value="">Selecione...</option>
-                  {tipos.map(t => (
-                    <option key={t.id} value={t.id}>{t.nome}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={form.ativo}
-                  onChange={e => setForm({ ...form, ativo: e.target.checked })}
-                />
-                Ativo
-              </label>
-            </div>
-
-            <div className={endpointStyles.formActions}>
-              <button type="submit" className="btn btn-primary">
-                {editingId ? 'Atualizar' : 'Adicionar'}
-              </button>
-              <button type="button" className="btn" onClick={() => { resetForm(); setShowForm(false) }}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+        <GenericForm
+          title={editingId ? 'Editar Evento' : 'Novo Evento'}
+          fields={FORM_FIELDS}
+          values={form}
+          onValueChange={(updates) => setForm({ ...form, ...updates })}
+          onSubmit={handleSubmit}
+          onCancel={() => { resetForm(); setShowForm(false) }}
+          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
+          isEditing={!!editingId}
+        />
       )}
 
-      <div className={endpointStyles.tableContainer}>
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -209,7 +157,7 @@ export default function AdminEventos() {
               <th>Local</th>
               <th>Tipo</th>
               <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th className={styles.actionsCell}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -220,11 +168,11 @@ export default function AdminEventos() {
                 <td>{e.local || '—'}</td>
                 <td>{getTipoName(e.tipoEventoId)}</td>
                 <td><Badge variant={e.ativo ? 'ok' : 'danger'}>{e.ativo ? 'Ativo' : 'Inativo'}</Badge></td>
-                <td style={{ textAlign: 'right' }}>
-                  <button className={endpointStyles.actionBtn} onClick={() => handleEdit(e)} title="Editar">
+                <td className={styles.actionsCell}>
+                  <button className={styles.actionBtn} onClick={() => handleEdit(e)} title="Editar">
                     <Icons.EditIcon size={16} />
                   </button>
-                  <button className={`${endpointStyles.actionBtn} ${endpointStyles.danger}`} onClick={() => handleDelete(e.id)} title="Deletar">
+                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(e.id || 0)} title="Deletar">
                     <Icons.TrashIcon size={16} />
                   </button>
                 </td>
@@ -234,7 +182,7 @@ export default function AdminEventos() {
         </table>
       </div>
 
-      <div className={endpointStyles.info}>
+      <div className={styles.info}>
         <p><b>Total:</b> {eventos.length} eventos cadastrados</p>
         <p><b>Ativos:</b> {eventos.filter(e => e.ativo).length}</p>
       </div>

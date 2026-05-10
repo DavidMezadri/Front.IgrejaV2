@@ -1,18 +1,34 @@
 import { useState, useEffect } from 'react'
 import pessoasService from '../../services/pessoasService'
 import familiasService from '../../services/familiasService'
+import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
-import endpointStyles from './AdminEndpoints.module.css'
+
+interface Pessoa {
+  id?: number
+  nome: string
+  dataNascimento: string
+  cpf: string
+  email: string
+  telefone: string
+  familiaId: string
+  ativo: boolean
+}
+
+interface Familia {
+  id: string | number
+  nomeFamilia: string
+}
 
 export default function AdminPessoas() {
-  const [pessoas, setPessoas] = useState([])
-  const [familias, setFamilias] = useState([])
+  const [pessoas, setPessoas] = useState<Pessoa[]>([])
+  const [familias, setFamilias] = useState<Familia[]>([])
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  const [editingId, setEditingId] = useState(null)
-  const [form, setForm] = useState({
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<Pessoa>({
     nome: '',
     dataNascimento: '',
     cpf: '',
@@ -21,6 +37,16 @@ export default function AdminPessoas() {
     familiaId: '',
     ativo: true
   })
+
+  const FORM_FIELDS: FormField[] = [
+    { name: 'nome', label: 'Nome', type: 'text', required: true },
+    { name: 'email', label: 'E-mail', type: 'email', required: true },
+    { name: 'telefone', label: 'Telefone', type: 'tel' },
+    { name: 'cpf', label: 'CPF', type: 'text' },
+    { name: 'dataNascimento', label: 'Data de Nascimento', type: 'date' },
+    { name: 'familiaId', label: 'Família', type: 'select', options: familias },
+    { name: 'ativo', label: 'Ativo', type: 'checkbox' },
+  ]
 
   useEffect(() => {
     carregarDados()
@@ -47,7 +73,7 @@ export default function AdminPessoas() {
     setEditingId(null)
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.nome || !form.email) {
       alert('Preencha os campos obrigatórios')
@@ -69,7 +95,7 @@ export default function AdminPessoas() {
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id: number) {
     if (confirm('Tem certeza?')) {
       try {
         await pessoasService.remove(id)
@@ -80,16 +106,16 @@ export default function AdminPessoas() {
     }
   }
 
-  function handleEdit(pessoa) {
+  function handleEdit(pessoa: Pessoa) {
     setForm(pessoa)
-    setEditingId(pessoa.id)
+    setEditingId(pessoa.id || null)
     setShowForm(true)
     window.scrollTo(0, 0)
   }
 
-  const getFamiliaName = (id) => familias.find(f => f.id === id)?.nomeFamilia || '—'
+  const getFamiliaName = (id: string | number | undefined) => familias.find(f => f.id === id)?.nomeFamilia || '—'
 
-  if (loading) return <div style={{ padding: '28px' }}>Carregando...</div>
+  if (loading) return <div className="p-16">Carregando...</div>
 
   return (
     <div className={styles.section}>
@@ -110,98 +136,19 @@ export default function AdminPessoas() {
       </div>
 
       {showForm && (
-        <div className={endpointStyles.formCard}>
-          <h3>{editingId ? 'Editar Pessoa' : 'Nova Pessoa'}</h3>
-          <form onSubmit={handleSubmit} className={endpointStyles.form}>
-            <div className={endpointStyles.formGroup}>
-              <label>Nome *</label>
-              <input
-                type="text"
-                value={form.nome}
-                onChange={e => setForm({ ...form, nome: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>E-mail *</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>Telefone</label>
-                <input
-                  type="tel"
-                  value={form.telefone}
-                  onChange={e => setForm({ ...form, telefone: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>CPF</label>
-                <input
-                  type="text"
-                  value={form.cpf}
-                  onChange={e => setForm({ ...form, cpf: e.target.value })}
-                  placeholder="000.000.000-00"
-                />
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>Data de Nascimento</label>
-                <input
-                  type="date"
-                  value={form.dataNascimento}
-                  onChange={e => setForm({ ...form, dataNascimento: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>Família</label>
-              <select
-                value={form.familiaId}
-                onChange={e => setForm({ ...form, familiaId: e.target.value })}
-              >
-                <option value="">Selecione...</option>
-                {familias.map(f => (
-                  <option key={f.id} value={f.id}>{f.nomeFamilia}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={form.ativo}
-                  onChange={e => setForm({ ...form, ativo: e.target.checked })}
-                />
-                Ativo
-              </label>
-            </div>
-
-            <div className={endpointStyles.formActions}>
-              <button type="submit" className="btn btn-primary">
-                {editingId ? 'Atualizar' : 'Adicionar'}
-              </button>
-              <button type="button" className="btn" onClick={() => { resetForm(); setShowForm(false) }}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+        <GenericForm
+          title={editingId ? 'Editar Pessoa' : 'Nova Pessoa'}
+          fields={FORM_FIELDS}
+          values={form}
+          onValueChange={(updates) => setForm({ ...form, ...updates })}
+          onSubmit={handleSubmit}
+          onCancel={() => { resetForm(); setShowForm(false) }}
+          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
+          isEditing={!!editingId}
+        />
       )}
 
-      <div className={endpointStyles.tableContainer}>
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -210,7 +157,7 @@ export default function AdminPessoas() {
               <th>Família</th>
               <th>Telefone</th>
               <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th className={styles.actionsCell}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -221,11 +168,11 @@ export default function AdminPessoas() {
                 <td>{getFamiliaName(p.familiaId)}</td>
                 <td>{p.telefone || '—'}</td>
                 <td><Badge variant={p.ativo ? 'ok' : 'danger'}>{p.ativo ? 'Ativo' : 'Inativo'}</Badge></td>
-                <td style={{ textAlign: 'right' }}>
-                  <button className={endpointStyles.actionBtn} onClick={() => handleEdit(p)} title="Editar">
+                <td className={styles.actionsCell}>
+                  <button className={styles.actionBtn} onClick={() => handleEdit(p)} title="Editar">
                     <Icons.EditIcon size={16} />
                   </button>
-                  <button className={`${endpointStyles.actionBtn} ${endpointStyles.danger}`} onClick={() => handleDelete(p.id)} title="Deletar">
+                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(p.id || 0)} title="Deletar">
                     <Icons.TrashIcon size={16} />
                   </button>
                 </td>
@@ -235,7 +182,7 @@ export default function AdminPessoas() {
         </table>
       </div>
 
-      <div className={endpointStyles.info}>
+      <div className={styles.info}>
         <p><b>Total:</b> {pessoas.length} pessoas cadastradas</p>
         <p><b>Ativas:</b> {pessoas.filter(p => p.ativo).length}</p>
       </div>

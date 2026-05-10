@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import usuariosService from '../../services/usuariosService'
+import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
-import endpointStyles from './AdminEndpoints.module.css'
 
 const ROLES = [
   { id: 0, nome: 'Administrador' },
@@ -12,6 +12,13 @@ const ROLES = [
   { id: 3, nome: 'Comissão' },
   { id: 4, nome: 'Membro' },
   { id: 5, nome: 'Visitante' },
+]
+
+const FORM_FIELDS: FormField[] = [
+  { name: 'nome', label: 'Nome', type: 'text', required: true },
+  { name: 'email', label: 'E-mail', type: 'email', required: true },
+  { name: 'tipoUsuario', label: 'Papel', type: 'select', options: ROLES },
+  { name: 'ativo', label: 'Ativo', type: 'checkbox' },
 ]
 
 interface Usuario {
@@ -117,7 +124,7 @@ export default function AdminUsuarios() {
     return role?.nome || '—'
   }
 
-  if (loading) return <div style={{ padding: '28px' }}>Carregando...</div>
+  if (loading) return <div className="p-16">Carregando...</div>
 
   return (
     <div className={styles.section}>
@@ -126,73 +133,25 @@ export default function AdminUsuarios() {
           <div className="eyebrow">Gerenciamento</div>
           <h2>Usuários</h2>
         </div>
-        <div style={{ fontSize: 13, color: 'var(--fg-muted)' }}>
+        <div className="text-muted">
           Gerenciar acesso ao sistema
         </div>
       </div>
 
       {showForm && (
-        <div className={endpointStyles.formCard}>
-          <h3>{editingId ? 'Editar Usuário' : 'Novo Usuário'}</h3>
-          <form onSubmit={handleSubmit} className={endpointStyles.form}>
-            <div className={endpointStyles.formGroup}>
-              <label>Nome *</label>
-              <input
-                type="text"
-                value={form.nome}
-                onChange={e => setForm({ ...form, nome: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className={endpointStyles.row}>
-              <div className={endpointStyles.formGroup}>
-                <label>E-mail *</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className={endpointStyles.formGroup}>
-                <label>Papel</label>
-                <select
-                  value={form.tipoUsuario}
-                  onChange={e => setForm({ ...form, tipoUsuario: e.target.value })}
-                >
-                  {ROLES.map(role => (
-                    <option key={role.id} value={role.id}>{role.nome}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className={endpointStyles.formGroup}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={form.ativo}
-                  onChange={e => setForm({ ...form, ativo: e.target.checked })}
-                />
-                Ativo
-              </label>
-            </div>
-
-            <div className={endpointStyles.formActions}>
-              <button type="submit" className="btn btn-primary">
-                {editingId ? 'Atualizar' : 'Adicionar'}
-              </button>
-              <button type="button" className="btn" onClick={() => { resetForm(); setShowForm(false) }}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+        <GenericForm
+          title={editingId ? 'Editar Usuário' : 'Novo Usuário'}
+          fields={FORM_FIELDS}
+          values={form}
+          onValueChange={(updates) => setForm({ ...form, ...updates })}
+          onSubmit={handleSubmit}
+          onCancel={() => { resetForm(); setShowForm(false) }}
+          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
+          isEditing={!!editingId}
+        />
       )}
 
-      <div className={endpointStyles.tableContainer}>
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -201,7 +160,7 @@ export default function AdminUsuarios() {
               <th>E-mail</th>
               <th>Papel</th>
               <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th className={styles.actionsCell}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -212,11 +171,11 @@ export default function AdminUsuarios() {
                 <td>{u.email}</td>
                 <td>{getRoleName(u.tipoUsuario)}</td>
                 <td><Badge variant={u.ativo ? 'ok' : 'danger'}>{u.ativo ? 'Ativo' : 'Inativo'}</Badge></td>
-                <td style={{ textAlign: 'right' }}>
-                  <button className={endpointStyles.actionBtn} onClick={() => handleEdit(u)} title="Editar">
+                <td className={styles.actionsCell}>
+                  <button className={styles.actionBtn} onClick={() => handleEdit(u)} title="Editar">
                     <Icons.EditIcon size={16} />
                   </button>
-                  <button className={`${endpointStyles.actionBtn} ${endpointStyles.danger}`} onClick={() => handleDelete(u.id)} title="Deletar">
+                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(u.id)} title="Deletar">
                     <Icons.TrashIcon size={16} />
                   </button>
                 </td>
@@ -226,7 +185,7 @@ export default function AdminUsuarios() {
         </table>
       </div>
 
-      <div className={endpointStyles.info}>
+      <div className={styles.info}>
         <p><b>Total:</b> {usuarios.length} usuários cadastrados</p>
         <p><b>Ativos:</b> {usuarios.filter(u => u.ativo).length}</p>
       </div>
