@@ -167,7 +167,7 @@ export default function AdminUsuarios() {
             {usuarios.map((u: Usuario) => (
               <tr key={u.id}>
                 <td><b>{u.nome}</b></td>
-                <td><code style={{ fontSize: 12 }}>{u.nomeUsuario}</code></td>
+                <td><code className={styles.codeSmall}>{u.nomeUsuario}</code></td>
                 <td>{u.email}</td>
                 <td>{getRoleName(u.tipoUsuario)}</td>
                 <td><Badge variant={u.ativo ? 'ok' : 'danger'}>{u.ativo ? 'Ativo' : 'Inativo'}</Badge></td>

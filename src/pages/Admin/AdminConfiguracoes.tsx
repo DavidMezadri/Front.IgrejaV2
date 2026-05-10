@@ -96,7 +96,7 @@ export default function AdminConfiguracoes() {
         </div>
       )}
 
-      <div className={styles.info} style={{ marginTop: 28 }}>
+      <div className={`${styles.info} ${styles.infoSection}`}>
         <h3>Informações do Sistema</h3>
         <p><b>Nome:</b> {config.nomeIgreja}</p>
         <p><b>Email:</b> {config.email}</p>

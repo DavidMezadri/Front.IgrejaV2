@@ -144,7 +144,7 @@ export default function AdminEndpoints() {
                     {endpoint.metodo}
                   </Badge>
                 </td>
-                <td><code style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{endpoint.url}</code></td>
+                <td><code className={styles.codeSmall}>{endpoint.url}</code></td>
                 <td>
                   <button
                     className={styles.statusBtn}

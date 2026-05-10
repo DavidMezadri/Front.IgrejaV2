@@ -256,3 +256,33 @@
   color: var(--fg);
   font-size: 14px;
 }
+
+.infoSection {
+  margin-top: 28px;
+}
+
+.codeSmall {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.toggleBtn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+  background: color-mix(in oklch, var(--accent) 85%, black);
+  transform: translateY(-1px);
+}
+
+.sectionMarginTop {
+  margin-top: 32px;
+}

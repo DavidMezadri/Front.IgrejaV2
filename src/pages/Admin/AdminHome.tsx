@@ -81,16 +81,7 @@ export default function AdminHome() {
             </div>
             <button
               onClick={() => setShowCharts(false)}
-              style={{
-                padding: '8px 16px',
-                background: 'var(--accent)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 500
-              }}
+              className={styles.toggleBtn}
             >
               Ver Gerenciamento
             </button>
@@ -151,23 +142,14 @@ export default function AdminHome() {
         </>
       ) : (
         <>
-          <div className={styles.sectionHead} style={{ marginTop: '32px' }}>
+          <div className={`${styles.sectionHead} ${styles.sectionMarginTop}`}>
             <div>
               <div className="eyebrow">Painel de Controle</div>
               <h2>Gerenciamento</h2>
             </div>
             <button
               onClick={() => setShowCharts(true)}
-              style={{
-                padding: '8px 16px',
-                background: 'var(--accent)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 500
-              }}
+              className={styles.toggleBtn}
             >
               Ver Dashboard
             </button>

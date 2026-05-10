@@ -1,3 +1,5 @@
+import styles from './Checkbox.module.css'
+
 interface CheckboxProps {
   checked: boolean
   onChange: (checked: boolean) => void
@@ -7,7 +9,7 @@ interface CheckboxProps {
 
 export default function Checkbox({ checked, onChange, label, required }: CheckboxProps) {
   return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <label className={styles.checkboxLabel}>
       <input
         type="checkbox"
         className="form-checkbox"
