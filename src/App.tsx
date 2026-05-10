@@ -20,6 +20,8 @@ import AdminFamilias from './pages/Admin/AdminFamilias'
 import AdminEventos from './pages/Admin/AdminEventos'
 import AdminUsuarios from './pages/Admin/AdminUsuarios'
 import AdminConfiguracoes from './pages/Admin/AdminConfiguracoes'
+import AdminTraducoes from './pages/Admin/AdminTraducoes'
+import AdminVersiculos from './pages/Admin/AdminVersiculos'
 
 export default function App() {
   const { theme, toggleTheme } = useTheme()
@@ -37,6 +39,8 @@ export default function App() {
             <Route path="eventos" element={<AdminEventos />} />
             <Route path="usuarios" element={<AdminUsuarios />} />
             <Route path="configuracoes" element={<AdminConfiguracoes />} />
+            <Route path="traducoes" element={<AdminTraducoes />} />
+            <Route path="versiculos" element={<AdminVersiculos />} />
           </Route>
 
           {/* Rotas do Site Normal */}

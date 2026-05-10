@@ -42,4 +42,18 @@ export const EP = {
     LIST: '/api/config',
     UPDATE: '/api/config',
   },
+  TRADUCOES: {
+    LIST:   '/api/traducoes',
+    ONE:    ((id: string | number) => `/api/traducoes/${id}`) as EndpointId,
+    CREATE: '/api/traducoes',
+    UPDATE: ((id: string | number) => `/api/traducoes/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/traducoes/${id}`) as EndpointId,
+  },
+  VERSICULOS: {
+    LIST:   '/api/versiculos',
+    ONE:    ((id: string | number) => `/api/versiculos/${id}`) as EndpointId,
+    CREATE: '/api/versiculos',
+    UPDATE: ((id: string | number) => `/api/versiculos/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/versiculos/${id}`) as EndpointId,
+  },
 }

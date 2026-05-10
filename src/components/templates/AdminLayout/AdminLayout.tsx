@@ -9,9 +9,11 @@ const ADMIN_SECTIONS = [
   { id: 'pessoas', path: '/admin/pessoas', label: 'Pessoas', icon: Icons.UsersIcon, desc: 'Gerenciar membros da comunidade' },
   { id: 'familias', path: '/admin/familias', label: 'Famílias', icon: Icons.UsersIcon, desc: 'Organizar famílias cadastradas' },
   { id: 'eventos', path: '/admin/eventos', label: 'Eventos', icon: Icons.CalendarIcon, desc: 'Gerenciar calendário de eventos' },
-  { id: 'endpoints', path: '/admin/endpoints', label: 'Endpoints', icon: Icons.SettingsIcon, desc: 'Configurar endpoints da API' },
+  { id: 'traducoes', path: '/admin/traducoes', label: 'Traduções', icon: Icons.BookIcon, desc: 'Gerenciar traduções da bíblia' },
+  { id: 'versiculos', path: '/admin/versiculos', label: 'Versículos', icon: Icons.BookIcon, desc: 'Gerenciar versículos da bíblia' },
   { id: 'usuarios', path: '/admin/usuarios', label: 'Usuários', icon: Icons.LoginIcon, desc: 'Gerenciar acesso ao sistema' },
   { id: 'configuracoes', path: '/admin/configuracoes', label: 'Configurações', icon: Icons.SettingsIcon, desc: 'Ajustes gerais do sistema' },
+  { id: 'endpoints', path: '/admin/endpoints', label: 'Endpoints', icon: Icons.SettingsIcon, desc: 'Configurar endpoints da API' },
 ]
 
 export default function AdminLayout({ theme, toggleTheme }) {
