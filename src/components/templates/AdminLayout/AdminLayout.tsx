@@ -78,6 +78,14 @@ export default function AdminLayout({ theme, toggleTheme }) {
             </span>
             <span>Tema {theme === 'dark' ? 'claro' : 'escuro'}</span>
           </button>
+          <button
+            className={styles.homeBtn}
+            onClick={() => navigate('/inicio')}
+            title="Voltar à página inicial"
+          >
+            <Icons.HomeIcon size={16} />
+            <span>Página Inicial</span>
+          </button>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <Icons.LogoutIcon size={16} />
             <span>Sair</span>

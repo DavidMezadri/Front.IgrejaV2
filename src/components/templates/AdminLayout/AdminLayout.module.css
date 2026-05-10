@@ -124,6 +124,7 @@
 }
 
 .themeBtn,
+.homeBtn,
 .logoutBtn {
   display: flex;
   align-items: center;
@@ -140,9 +141,19 @@
 }
 
 .themeBtn:hover,
+.homeBtn:hover,
 .logoutBtn:hover {
   background: var(--surface-muted);
   color: var(--fg);
+}
+
+.homeBtn {
+  color: var(--fg);
+}
+
+.homeBtn:hover {
+  background: color-mix(in oklch, var(--accent) 15%, var(--surface));
+  color: var(--accent);
 }
 
 .logoutBtn {
