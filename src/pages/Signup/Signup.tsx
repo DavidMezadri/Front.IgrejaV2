@@ -44,10 +44,10 @@ export default function Signup() {
     try {
       await authService.register({
         nomeUsuario: fields.nomeUsuario,
-        senha: fields.senha,
         nome: fields.nome,
         email: fields.email,
-        ConfirmarSenha: fields.confirmSenha,
+        senha: fields.senha,
+        confirmarSenha: fields.confirmSenha,
       })
       navigate('/login?registered=true')
     } catch (err: unknown) {

@@ -3,10 +3,10 @@ import { EP } from '../api/endpoints'
 
 interface RegisterData {
   nomeUsuario: string
-  senha: string
   nome: string
   email: string
-  ConfirmarSenha: string
+  senha: string
+  confirmarSenha: string
 }
 
 const authService = {
