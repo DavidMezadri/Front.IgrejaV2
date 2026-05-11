@@ -2,10 +2,9 @@ type EndpointId = (id: string | number) => string
 
 export const EP = {
   AUTH: {
-    LOGIN:    '/api/auth/login',
-    REGISTER: '/api/auth/register',
-    ME:       '/api/auth/me',
-    LOGOUT:   '/api/auth/logout',
+    LOGIN:  '/api/auth/login',
+    ME:     '/api/auth/me',
+    LOGOUT: '/api/auth/logout',
   },
   EVENTOS: {
     LIST:       '/api/eventos',
@@ -35,6 +34,7 @@ export const EP = {
   USUARIOS: {
     LIST:   '/api/usuarios',
     ONE:    ((id: string | number) => `/api/usuarios/${id}`) as EndpointId,
+    CREATE: '/api/usuarios',
     UPDATE: ((id: string | number) => `/api/usuarios/${id}`) as EndpointId,
     REMOVE: ((id: string | number) => `/api/usuarios/${id}`) as EndpointId,
   },

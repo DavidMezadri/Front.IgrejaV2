@@ -47,6 +47,7 @@ export default function Signup() {
         senha: fields.senha,
         nome: fields.nome,
         email: fields.email,
+        ConfirmarSenha: fields.confirmSenha,
       })
       navigate('/login?registered=true')
     } catch (err: unknown) {
@@ -122,7 +123,7 @@ export default function Signup() {
             className="btn btn-primary"
             type="submit"
             disabled={loading}
-            style={{ width: '100%', justifyContent: 'center', marginTop: 22 }}
+            style={{ width: '100%', marginTop: 22 }}
           >
             {loading ? 'Cadastrando…' : <>Cadastrar <span className="arrow" /></>}
           </button>
