@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import versiculoService from '../../services/versiculoService'
 import traducaoService from '../../services/traducaoService'
 import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
+import { livroOptions } from '../../types/LivroEnum'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
 
@@ -34,7 +35,7 @@ export default function AdminVersiculos() {
   })
 
   const FORM_FIELDS: FormField[] = [
-    { name: 'livro', label: 'Livro', type: 'number', required: true },
+    { name: 'livro', label: 'Livro', type: 'select', options: livroOptions, required: true },
     { name: 'capitulo', label: 'Capítulo', type: 'number', required: true },
     { name: 'numero', label: 'Versículo', type: 'number', required: true },
     { name: 'texto', label: 'Texto', type: 'textarea', required: true },
@@ -107,6 +108,7 @@ export default function AdminVersiculos() {
   }
 
   const getTraducaoNome = (id: number | undefined) => traducoes.find(t => t.id === id)?.nome || '—'
+  const getLivroNome = (id: number | undefined) => livroOptions.find(l => l.id === id)?.nome || '—'
 
   if (loading) return <div className="p-16">Carregando...</div>
 
@@ -154,7 +156,7 @@ export default function AdminVersiculos() {
           <tbody>
             {versiculos.map(v => (
               <tr key={v.id}>
-                <td><b>{v.livro}:{v.capitulo}:{v.numero}</b></td>
+                <td><b>{getLivroNome(v.livro)} {v.capitulo}:{v.numero}</b></td>
                 <td>{v.texto.substring(0, 50)}...</td>
                 <td>{getTraducaoNome(v.traducaoId)}</td>
                 <td className={styles.actionsCell}>
