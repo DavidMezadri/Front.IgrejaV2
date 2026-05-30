@@ -2,6 +2,7 @@ import { DATA } from '../../data/mockData'
 import { useEventos } from '../../hooks/useEventos'
 import { useMinisterios } from '../../hooks/useMinisterios'
 import { useFamilias } from '../../hooks/useFamilias'
+import { usePageConfig } from '../../hooks/usePageConfig'
 import HeroClassic from '../../components/organisms/HeroClassic/HeroClassic'
 import StatsRow from '../../components/organisms/StatsRow/StatsRow'
 import VerseStrip from '../../components/organisms/VerseStrip/VerseStrip'
@@ -11,17 +12,28 @@ export default function Home() {
   const { data: eventos = [] } = useEventos()
   const { data: ministerios = [] } = useMinisterios()
   const { data: familias = [] } = useFamilias()
+  const { data: config = {} } = usePageConfig()
 
   return (
     <main>
-      <HeroClassic />
+      <HeroClassic
+        titulo={config['home.titulo']}
+        subtitulo={config['home.subtitulo']}
+        textoApoio={config['home.textoApoio']}
+      />
       <StatsRow
         totalEventos={eventos.length}
         totalMinisterios={ministerios.length}
         totalFamilias={familias.length}
       />
       <VerseStrip versiculo={DATA.versiculoDoDia} />
-      <AppFooter igreja={DATA.igreja} />
+      <AppFooter igreja={{
+        nome: config['igreja.nome'] || DATA.igreja.nome,
+        lema: config['igreja.lema'] || DATA.igreja.lema,
+        endereco: config['igreja.endereco'] || DATA.igreja.endereco,
+        telefone: config['igreja.telefone'] || DATA.igreja.telefone,
+        email: config['igreja.email'] || DATA.igreja.email,
+      }} />
     </main>
   )
 }

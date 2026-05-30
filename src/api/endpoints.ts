@@ -12,9 +12,14 @@ export const EP = {
     CREATE:     '/api/eventos',
     UPDATE:     ((id: string | number) => `/api/eventos/${id}`) as EndpointId,
     REMOVE:     ((id: string | number) => `/api/eventos/${id}`) as EndpointId,
+    ATIVOS:     '/api/eventos/ativos',
   },
   TIPOS_EVENTO: {
-    LIST: '/api/tipos-evento',
+    LIST:   '/api/tipos-evento',
+    ONE:    ((id: string | number) => `/api/tipos-evento/${id}`) as EndpointId,
+    CREATE: '/api/tipos-evento',
+    UPDATE: ((id: string | number) => `/api/tipos-evento/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/tipos-evento/${id}`) as EndpointId,
   },
   PESSOAS: {
     LIST:   '/api/pessoas',
@@ -33,8 +38,13 @@ export const EP = {
     SEARCH: '/api/familias/buscar',
   },
   PRESENCAS: {
-    LIST:   '/api/presencas',
-    CREATE: '/api/presencas',
+    LIST:      '/api/presencas',
+    ONE:       ((id: string | number) => `/api/presencas/${id}`) as EndpointId,
+    CREATE:    '/api/presencas',
+    UPDATE:    ((id: string | number) => `/api/presencas/${id}`) as EndpointId,
+    REMOVE:    ((id: string | number) => `/api/presencas/${id}`) as EndpointId,
+    BY_EVENTO: ((eventoId: string | number) => `/api/presencas/evento/${eventoId}`) as EndpointId,
+    BY_PESSOA: ((pessoaId: string | number) => `/api/presencas/pessoa/${pessoaId}`) as EndpointId,
   },
   USUARIOS: {
     LIST:   '/api/usuarios',

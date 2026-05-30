@@ -3,7 +3,12 @@
     "allow": [
       "Bash(npm run *)",
       "PowerShell(npm run dev 2>&1)",
-      "PowerShell(npm run build 2>&1)"
+      "PowerShell(npm run build 2>&1)",
+      "Bash(git reset *)",
+      "Bash(git commit -m ' *)",
+      "Bash(ls \"c:\\\\Users\\\\david\\\\source\\\\repos\")",
+      "Read(//c/Users/david/source/repos/**)",
+      "Bash(git add *)"
     ]
   }
 }

@@ -6,9 +6,12 @@ import styles from './AdminLayout.module.css'
 
 const ADMIN_SECTIONS = [
   { id: 'admin', path: '/admin', label: 'Dashboard', icon: Icons.HomeIcon },
+  { id: 'cms', path: '/admin/cms', label: 'CMS', icon: Icons.EditIcon, desc: 'Editar conteúdo das páginas públicas' },
   { id: 'pessoas', path: '/admin/pessoas', label: 'Pessoas', icon: Icons.UsersIcon, desc: 'Gerenciar membros da comunidade' },
   { id: 'familias', path: '/admin/familias', label: 'Famílias', icon: Icons.UsersIcon, desc: 'Organizar famílias cadastradas' },
+  { id: 'tiposEvento', path: '/admin/tipos-evento', label: 'Tipos de Evento', icon: Icons.CalendarIcon, desc: 'Categorias de eventos' },
   { id: 'eventos', path: '/admin/eventos', label: 'Eventos', icon: Icons.CalendarIcon, desc: 'Gerenciar calendário de eventos' },
+  { id: 'presencas', path: '/admin/presencas', label: 'Presenças', icon: Icons.CheckIcon, desc: 'Registro de presença nos eventos' },
   { id: 'traducoes', path: '/admin/traducoes', label: 'Traduções', icon: Icons.BookIcon, desc: 'Gerenciar traduções da bíblia' },
   { id: 'versiculos', path: '/admin/versiculos', label: 'Versículos', icon: Icons.BookIcon, desc: 'Gerenciar versículos da bíblia' },
   { id: 'usuarios', path: '/admin/usuarios', label: 'Usuários', icon: Icons.LoginIcon, desc: 'Gerenciar acesso ao sistema' },
