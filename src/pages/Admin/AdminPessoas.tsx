@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import pessoasService from '../../services/pessoasService'
 import familiasService from '../../services/familiasService'
-import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
+import { FormField } from '../../components/molecules/GenericForm/GenericForm'
+import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
+import Select from '../../components/atoms/Select/Select'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
@@ -26,7 +28,7 @@ interface Pessoa extends PessoaForm {
 
 interface Familia {
   id: string | number
-  nomeFamilia: string
+  nome: string
 }
 
 export default function AdminPessoas() {
@@ -71,7 +73,6 @@ export default function AdminPessoas() {
     { name: 'dataBatismo', label: 'Data de Batismo', type: 'date' },
     { name: 'membroDesde', label: 'Membro Desde', type: 'date', required: true },
     { name: 'estadoCivil', label: 'Estado Civil', type: 'select', options: ESTADO_CIVIL_OPTIONS },
-    { name: 'familiaId', label: 'Família', type: 'select', options: familias.map(f => ({ id: f.id, nome: (f as any).nomeFamilia || String(f.id) })) },
     { name: 'observacoes', label: 'Observações', type: 'textarea' },
   ]
 
@@ -187,7 +188,22 @@ export default function AdminPessoas() {
     window.scrollTo(0, 0)
   }
 
-  const getFamiliaName = (id: string | number | undefined) => familias.find(f => f.id === id)?.nomeFamilia || '—'
+  const getFamiliaName = (id: string | number | undefined) => familias.find(f => f.id === id)?.nome || '—'
+
+  async function buscarFamilias(query: string) {
+    try {
+      // Se vazio, retorna todas as famílias carregadas
+      if (!query.trim()) {
+        return familias.map(f => ({ id: f.id, label: f.nome }))
+      }
+      // Se tem query, busca via API
+      const results = await familiasService.search(query)
+      return results.map((f: any) => ({ id: f.id, label: f.nome || f.nome }))
+    } catch (err) {
+      console.error('Erro ao buscar famílias:', err)
+      return []
+    }
+  }
 
   if (loading) return <div className="p-16">Carregando...</div>
 
@@ -210,16 +226,105 @@ export default function AdminPessoas() {
       </div>
 
       {showForm && (
-        <GenericForm
-          title={editingId ? 'Editar Pessoa' : 'Nova Pessoa'}
-          fields={FORM_FIELDS}
-          values={form}
-          onValueChange={(updates) => setForm({ ...form, ...updates })}
-          onSubmit={handleSubmit}
-          onCancel={() => { resetForm(); setShowForm(false) }}
-          submitLabel={editingId ? 'Atualizar' : 'Adicionar'}
-          isEditing={!!editingId}
-        />
+        <div className={styles.formCard}>
+          <h3>{editingId ? 'Editar Pessoa' : 'Nova Pessoa'}</h3>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {FORM_FIELDS.map((field) => {
+              // Renderiza Família antes de Observações
+              if (field.name === 'observacoes') {
+                return (
+                  <>
+                    <div key="familia-group" className={styles.formGroup}>
+                      <AsyncSearchSelect
+                        label="Família"
+                        placeholder="Buscar família..."
+                        value={form.familiaId ? Number(form.familiaId) : null}
+                        onChange={(value) => setForm({ ...form, familiaId: value ? String(value) : '' })}
+                        onSearch={buscarFamilias}
+                        minChars={0}
+                        initialOptions={familias.map(f => ({ id: f.id, label: f.nome }))}
+                      />
+                    </div>
+                    <div key={field.name} className={styles.formGroup}>
+                      <label>
+                        {field.label}
+                        {field.required && ' *'}
+                      </label>
+                      <textarea
+                        value={form[field.name as keyof PessoaForm] || ''}
+                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        required={field.required}
+                      />
+                    </div>
+                  </>
+                )
+              }
+
+              return (
+                <div key={field.name} className={styles.formGroup}>
+                  {field.type === 'select' ? (
+                    <>
+                      <label>
+                        {field.label}
+                        {field.required && ' *'}
+                      </label>
+                      <Select
+                        value={form[field.name as keyof PessoaForm] || ''}
+                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        required={field.required}
+                      >
+                        <option value="">Selecione...</option>
+                        {field.options?.map((opt) => (
+                          <option key={opt.id} value={opt.id}>
+                            {opt.nome}
+                          </option>
+                        ))}
+                      </Select>
+                    </>
+                  ) : field.type === 'textarea' ? (
+                    <>
+                      <label>
+                        {field.label}
+                        {field.required && ' *'}
+                      </label>
+                      <textarea
+                        value={form[field.name as keyof PessoaForm] || ''}
+                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        required={field.required}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label>
+                        {field.label}
+                        {field.required && ' *'}
+                      </label>
+                      <input
+                        type={field.type}
+                        value={form[field.name as keyof PessoaForm] || ''}
+                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        required={field.required}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
+
+            <div className="form-actions">
+              <button type="submit" className="btn btn-primary">
+                {editingId ? 'Atualizar' : 'Adicionar'}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => { resetForm(); setShowForm(false) }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
       <div className={styles.tableContainer}>

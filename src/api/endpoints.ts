@@ -22,10 +22,15 @@ export const EP = {
     CREATE: '/api/pessoas',
     UPDATE: ((id: string | number) => `/api/pessoas/${id}`) as EndpointId,
     REMOVE: ((id: string | number) => `/api/pessoas/${id}`) as EndpointId,
+    SEARCH: '/api/pessoas/buscar',
   },
   FAMILIAS: {
     LIST:   '/api/familias',
     ONE:    ((id: string | number) => `/api/familias/${id}`) as EndpointId,
+    CREATE: '/api/familias',
+    UPDATE: ((id: string | number) => `/api/familias/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/familias/${id}`) as EndpointId,
+    SEARCH: '/api/familias/buscar',
   },
   PRESENCAS: {
     LIST:   '/api/presencas',

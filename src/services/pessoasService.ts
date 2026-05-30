@@ -7,6 +7,7 @@ const pessoasService = {
   create:  (data: Record<string, unknown>) => api.post(EP.PESSOAS.CREATE, data).then(r => r.data),
   update:  (id: string | number, data: Record<string, unknown>) => api.put(EP.PESSOAS.UPDATE(id), data).then(r => r.data),
   remove:  (id: string | number) => api.delete(EP.PESSOAS.REMOVE(id)).then(r => r.data),
+  search:  (nome: string) => api.get(EP.PESSOAS.SEARCH, { params: { nome } }).then(r => r.data),
 }
 
 export default pessoasService
