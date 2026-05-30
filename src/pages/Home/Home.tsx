@@ -1,7 +1,4 @@
 import { DATA } from '../../data/mockData'
-import { useEventos } from '../../hooks/useEventos'
-import { useMinisterios } from '../../hooks/useMinisterios'
-import { useFamilias } from '../../hooks/useFamilias'
 import { usePageConfig } from '../../hooks/usePageConfig'
 import HeroClassic from '../../components/organisms/HeroClassic/HeroClassic'
 import StatsRow from '../../components/organisms/StatsRow/StatsRow'
@@ -9,9 +6,6 @@ import VerseStrip from '../../components/organisms/VerseStrip/VerseStrip'
 import AppFooter from '../../components/organisms/AppFooter/AppFooter'
 
 export default function Home() {
-  const { data: eventos = [] } = useEventos()
-  const { data: ministerios = [] } = useMinisterios()
-  const { data: familias = [] } = useFamilias()
   const { data: config = {} } = usePageConfig()
 
   return (
@@ -22,9 +16,9 @@ export default function Home() {
         textoApoio={config['home.textoApoio']}
       />
       <StatsRow
-        totalEventos={eventos.length}
-        totalMinisterios={ministerios.length}
-        totalFamilias={familias.length}
+        totalEventos={8}
+        totalMinisterios={5}
+        totalFamilias={120}
       />
       <VerseStrip versiculo={DATA.versiculoDoDia} />
       <AppFooter igreja={{

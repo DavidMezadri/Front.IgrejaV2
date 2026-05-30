@@ -8,7 +8,8 @@
       "Bash(git commit -m ' *)",
       "Bash(ls \"c:\\\\Users\\\\david\\\\source\\\\repos\")",
       "Read(//c/Users/david/source/repos/**)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(curl -s http://localhost:8080/api/config)"
     ]
   }
 }
