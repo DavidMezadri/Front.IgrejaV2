@@ -6,15 +6,22 @@ import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
 
-interface Pessoa {
-  id?: number
+interface PessoaForm {
   nome: string
   dataNascimento: string
-  cpf: string
+  sexo: string
   email: string
   telefone: string
+  dataBatismo: string
+  membroDesde: string
+  estadoCivil: string
+  observacoes: string
   familiaId: string
-  ativo: boolean
+}
+
+interface Pessoa extends PessoaForm {
+  id?: number
+  ativo?: boolean
 }
 
 interface Familia {
@@ -28,25 +35,69 @@ export default function AdminPessoas() {
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [form, setForm] = useState<Pessoa>({
+  const [form, setForm] = useState<PessoaForm>({
     nome: '',
     dataNascimento: '',
-    cpf: '',
+    sexo: '',
     email: '',
     telefone: '',
+    dataBatismo: '',
+    membroDesde: '',
+    estadoCivil: '',
+    observacoes: '',
     familiaId: '',
-    ativo: true
   })
+
+  const SEXO_OPTIONS = [
+    { id: 1, nome: 'Masculino' },
+    { id: 2, nome: 'Feminino' },
+    { id: 3, nome: 'Outro' },
+  ]
+
+  const ESTADO_CIVIL_OPTIONS = [
+    { id: 1, nome: 'Solteiro(a)' },
+    { id: 2, nome: 'Casado(a)' },
+    { id: 3, nome: 'Divorciado(a)' },
+    { id: 4, nome: 'Viúvo(a)' },
+    { id: 5, nome: 'União estável' },
+  ]
 
   const FORM_FIELDS: FormField[] = [
     { name: 'nome', label: 'Nome', type: 'text', required: true },
     { name: 'email', label: 'E-mail', type: 'email', required: true },
-    { name: 'telefone', label: 'Telefone', type: 'tel' },
-    { name: 'cpf', label: 'CPF', type: 'text' },
+    { name: 'telefone', label: 'Telefone', type: 'text' },
     { name: 'dataNascimento', label: 'Data de Nascimento', type: 'date' },
-    { name: 'familiaId', label: 'Família', type: 'select', options: familias },
-    { name: 'ativo', label: 'Ativo', type: 'checkbox' },
+    { name: 'sexo', label: 'Sexo', type: 'select', options: SEXO_OPTIONS },
+    { name: 'dataBatismo', label: 'Data de Batismo', type: 'date' },
+    { name: 'membroDesde', label: 'Membro Desde', type: 'date', required: true },
+    { name: 'estadoCivil', label: 'Estado Civil', type: 'select', options: ESTADO_CIVIL_OPTIONS },
+    { name: 'familiaId', label: 'Família', type: 'select', options: familias.map(f => ({ id: f.id, nome: (f as any).nomeFamilia || String(f.id) })) },
+    { name: 'observacoes', label: 'Observações', type: 'textarea' },
   ]
+
+  function toDateInputValue(value?: string) {
+    if (!value) return ''
+    return value.slice(0, 10)
+  }
+
+  function toIsoDate(value: string) {
+    return value ? new Date(`${value}T00:00:00.000Z`).toISOString() : ''
+  }
+
+  function toPayload(values: PessoaForm) {
+    return {
+      nome: values.nome,
+      dataNascimento: toIsoDate(values.dataNascimento),
+      sexo: Number(values.sexo || 0),
+      email: values.email,
+      telefone: values.telefone,
+      dataBatismo: toIsoDate(values.dataBatismo),
+      membroDesde: toIsoDate(values.membroDesde),
+      estadoCivil: Number(values.estadoCivil || 0),
+      observacoes: values.observacoes,
+      familiaId: values.familiaId === '' ? null : Number(values.familiaId),
+    }
+  }
 
   useEffect(() => {
     carregarDados()
@@ -69,7 +120,18 @@ export default function AdminPessoas() {
   }
 
   function resetForm() {
-    setForm({ nome: '', dataNascimento: '', cpf: '', email: '', telefone: '', familiaId: '', ativo: true })
+    setForm({
+      nome: '',
+      dataNascimento: '',
+      sexo: '',
+      email: '',
+      telefone: '',
+      dataBatismo: '',
+      membroDesde: '',
+      estadoCivil: '',
+      observacoes: '',
+      familiaId: '',
+    })
     setEditingId(null)
   }
 
@@ -81,10 +143,11 @@ export default function AdminPessoas() {
     }
 
     try {
+      const payload = toPayload(form)
       if (editingId) {
-        await pessoasService.update(editingId, form)
+        await pessoasService.update(editingId, payload)
       } else {
-        await pessoasService.create(form)
+        await pessoasService.create(payload)
       }
       await carregarDados()
       resetForm()
@@ -107,7 +170,18 @@ export default function AdminPessoas() {
   }
 
   function handleEdit(pessoa: Pessoa) {
-    setForm(pessoa)
+    setForm({
+      nome: pessoa.nome,
+      dataNascimento: toDateInputValue(pessoa.dataNascimento),
+      sexo: String(pessoa.sexo || ''),
+      email: pessoa.email,
+      telefone: pessoa.telefone,
+      dataBatismo: toDateInputValue(pessoa.dataBatismo),
+      membroDesde: toDateInputValue(pessoa.membroDesde),
+      estadoCivil: String(pessoa.estadoCivil || ''),
+      observacoes: pessoa.observacoes || '',
+      familiaId: String(pessoa.familiaId || ''),
+    })
     setEditingId(pessoa.id || null)
     setShowForm(true)
     window.scrollTo(0, 0)
@@ -184,7 +258,6 @@ export default function AdminPessoas() {
 
       <div className={styles.info}>
         <p><b>Total:</b> {pessoas.length} pessoas cadastradas</p>
-        <p><b>Ativas:</b> {pessoas.filter(p => p.ativo).length}</p>
       </div>
     </div>
   )
