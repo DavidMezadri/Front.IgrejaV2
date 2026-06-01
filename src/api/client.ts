@@ -16,7 +16,6 @@ api.interceptors.response.use(
   err => {
     if (err.response?.status === 401) {
       localStorage.removeItem('auth_token')
-      window.location.hash = '/login'
     }
     return Promise.reject(err)
   }
