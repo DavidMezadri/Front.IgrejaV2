@@ -5,7 +5,7 @@ import { DATA } from '../data/mockData'
 export function useAvisos() {
   return useQuery({
     queryKey: ['avisos'],
-    queryFn: avisosService.list,
+    queryFn: () => avisosService.list(),
     placeholderData: DATA.avisos,
     staleTime: 1000 * 60 * 5,
   })

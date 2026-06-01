@@ -5,7 +5,7 @@ import { DATA } from '../data/mockData'
 export function useOracoes() {
   return useQuery({
     queryKey: ['oracoes'],
-    queryFn: oracoesService.list,
+    queryFn: () => oracoesService.list(),
     placeholderData: DATA.oracoes,
     staleTime: 1000 * 60 * 5,
   })

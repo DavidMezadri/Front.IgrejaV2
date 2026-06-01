@@ -5,7 +5,7 @@ import { DATA } from '../data/mockData'
 export function useMinisterios() {
   return useQuery({
     queryKey: ['ministerios'],
-    queryFn: ministeriosService.list,
+    queryFn: () => ministeriosService.list(),
     placeholderData: DATA.ministerios,
     staleTime: 1000 * 60 * 10,
   })

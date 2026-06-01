@@ -5,7 +5,7 @@ import { DATA } from '../data/mockData'
 export function useSermoes() {
   return useQuery({
     queryKey: ['sermoes'],
-    queryFn: sermoesService.list,
+    queryFn: () => sermoesService.list(),
     placeholderData: DATA.sermoes,
     staleTime: 1000 * 60 * 10,
   })
