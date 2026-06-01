@@ -71,4 +71,9 @@ export const EP = {
     UPDATE: ((id: string | number) => `/api/versiculos/${id}`) as EndpointId,
     REMOVE: ((id: string | number) => `/api/versiculos/${id}`) as EndpointId,
   },
+  UPLOAD: {
+    IMAGEM:        '/api/upload/imagem',
+    REMOVE_IMAGEM: ((nomeArquivo: string) => `/api/upload/imagem/${nomeArquivo}`) as EndpointId,
+    LIST_IMAGENS:  '/api/upload/imagens',
+  },
 }

@@ -1,15 +1,20 @@
 import styles from './HeroClassic.module.css'
+import ImageCarousel from '../ImageCarousel/ImageCarousel'
+import { useImagensUpload } from '../../../hooks/usePageConfig'
 
 interface HeroClassicProps {
   titulo?: string
   subtitulo?: string
   textoApoio?: string
+  fotoBanner?: string
 }
 
 const DEFAULT_TITULO = 'Um lugar para encontrar a Cristo, a si mesmo, e ao próximo.'
 const DEFAULT_SUBTITULO = 'Domingos às 9h e 19h. Estudos durante a semana, ministérios para todas as idades e uma comunidade que caminha junto.'
 
-export default function HeroClassic({ titulo, subtitulo, textoApoio }: HeroClassicProps = {}) {
+export default function HeroClassic({ titulo, subtitulo, textoApoio, fotoBanner }: HeroClassicProps = {}) {
+  const { data: imagensData = [] } = useImagensUpload()
+  const carouselImages = imagensData.map(img => `${import.meta.env.VITE_API_URL}${img.url}`)
   return (
     <section className={styles.hero}>
       <div className="container">
@@ -37,8 +42,16 @@ export default function HeroClassic({ titulo, subtitulo, textoApoio }: HeroClass
             </div>
           </div>
           <div className={styles.art}>
-            <div className={styles.stamp}>Templo<br />Principal</div>
-            <span className={styles.label}>[ foto da congregação ]</span>
+            {carouselImages.length > 0 ? (
+              <ImageCarousel images={carouselImages} autoPlay interval={5000} />
+            ) : fotoBanner ? (
+              <img src={`${import.meta.env.VITE_API_URL}${fotoBanner}`} alt="Banner da congregação" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+            ) : (
+              <>
+                <div className={styles.stamp}>Templo<br />Principal</div>
+                <span className={styles.label}>[ foto da congregação ]</span>
+              </>
+            )}
           </div>
         </div>
       </div>

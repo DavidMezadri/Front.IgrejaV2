@@ -14,6 +14,7 @@ export default function Home() {
         titulo={config['home.titulo']}
         subtitulo={config['home.subtitulo']}
         textoApoio={config['home.textoApoio']}
+        fotoBanner={config['home.fotoBanner']}
       />
       <StatsRow
         totalEventos={8}

@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { usePageConfig, useUpdatePageConfig } from '../../hooks/usePageConfig'
+import { usePageConfig, useUpdatePageConfig, useImagensUpload } from '../../hooks/usePageConfig'
+import uploadService from '../../services/uploadService'
+import { useQueryClient } from '@tanstack/react-query'
 import styles from './Admin.module.css'
 
 type TabId = 'home' | 'igreja' | 'sobre'
@@ -20,10 +22,14 @@ interface FormData {
 }
 
 export default function AdminCMS() {
-  const { data: config = {}, isLoading } = usePageConfig()
+  const { data: config = {}, isLoading, refetch } = usePageConfig()
   const { mutate: atualizar, isPending: isSaving } = useUpdatePageConfig()
+  const queryClient = useQueryClient()
+  const { data: imagens = [], isLoading: loadingImagens } = useImagensUpload()
   const [tabAtiva, setTabAtiva] = useState<TabId>('home')
   const [formData, setFormData] = useState<FormData>({})
+  const [uploadingFoto, setUploadingFoto] = useState(false)
+  const [deletandoFoto, setDeletandoFoto] = useState<string | null>(null)
 
   const handleInputChange = (chave: string, valor: string) => {
     setFormData(prev => ({
@@ -52,6 +58,53 @@ export default function AdminCMS() {
 
   const getValor = (chave: string): string => {
     return formData[chave] !== undefined ? formData[chave] : (config[chave] || '')
+  }
+
+  const handleUploadFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const arquivo = e.target.files?.[0]
+    if (!arquivo) return
+
+    setUploadingFoto(true)
+    try {
+      const resultado = await uploadService.uploadImagem(arquivo)
+      console.log('Upload sucesso, URL:', resultado.url)
+
+      const configsParaAtualizar = [
+        { chave: 'home.fotoBanner', valor: resultado.url }
+      ]
+
+      atualizar(configsParaAtualizar, {
+        onSuccess: () => {
+          console.log('Config salva, refazendo fetch...')
+          refetch()
+          queryClient.invalidateQueries({ queryKey: ['imagensUpload'] })
+          alert('✓ Foto enviada e salva com sucesso!')
+        },
+        onError: (err: any) => {
+          console.error('Erro ao salvar config:', err)
+          alert('✗ Erro ao salvar foto')
+        }
+      })
+    } catch (err: any) {
+      console.error('Erro ao fazer upload:', err)
+      alert('✗ Erro ao fazer upload da foto')
+    } finally {
+      setUploadingFoto(false)
+    }
+  }
+
+  const handleDeleteFoto = async (nomeArquivo: string) => {
+    if (!confirm(`Remover a imagem "${nomeArquivo}"?`)) return
+    setDeletandoFoto(nomeArquivo)
+    try {
+      await uploadService.deleteImagem(nomeArquivo)
+      queryClient.invalidateQueries({ queryKey: ['imagensUpload'] })
+    } catch (err: any) {
+      console.error('Erro ao deletar imagem:', err)
+      alert('✗ Erro ao remover imagem')
+    } finally {
+      setDeletandoFoto(null)
+    }
   }
 
   const temAlteracoes = Object.keys(formData).length > 0
@@ -123,6 +176,47 @@ export default function AdminCMS() {
                 onChange={(e) => handleInputChange('home.horarios', e.target.value)}
                 placeholder="Ex: Domingos: 9h e 19h"
               />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Galeria de Imagens do Banner</label>
+
+              {loadingImagens ? (
+                <p className={styles.imageEmpty}>Carregando...</p>
+              ) : imagens.length === 0 ? (
+                <p className={styles.imageEmpty}>Nenhuma imagem enviada ainda.</p>
+              ) : (
+                <div className={styles.imageGallery}>
+                  {imagens.map((img) => (
+                    <div key={img.nomeArquivo} className={styles.imageCard}>
+                      <img
+                        src={`${import.meta.env.VITE_API_URL}${img.url}`}
+                        alt={img.nomeArquivo}
+                      />
+                      <button
+                        type="button"
+                        className={styles.imageCardBtn}
+                        onClick={() => handleDeleteFoto(img.nomeArquivo)}
+                        disabled={deletandoFoto === img.nomeArquivo}
+                        title="Remover imagem"
+                      >
+                        {deletandoFoto === img.nomeArquivo ? '...' : '✕ Excluir'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleUploadFoto}
+                disabled={uploadingFoto}
+                className={styles.uploadInput}
+              />
+              <small className={styles.uploadHint}>
+                Formatos: JPG, PNG, GIF, WebP · Máximo 5MB
+              </small>
             </div>
           </form>
         )}
@@ -202,7 +296,7 @@ export default function AdminCMS() {
         )}
 
         {/* BOTÕES DE AÇÃO */}
-        <div className="form-actions">
+        <div className={styles.formActions}>
           <button
             type="button"
             className="btn btn-primary"

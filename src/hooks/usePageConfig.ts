@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import configService from '../services/configService'
+import uploadService from '../services/uploadService'
+import type { ImagemUpload } from '../services/uploadService'
 
 export interface PageConfig {
   [key: string]: string
@@ -26,5 +28,13 @@ export function useUpdatePageConfig() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pageConfig'] })
     },
+  })
+}
+
+export function useImagensUpload() {
+  return useQuery({
+    queryKey: ['imagensUpload'],
+    queryFn: () => uploadService.listarImagens(),
+    staleTime: 60 * 1000,
   })
 }

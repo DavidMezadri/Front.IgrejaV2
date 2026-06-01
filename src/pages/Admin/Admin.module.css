@@ -371,3 +371,139 @@
   color: var(--fg-muted);
   cursor: not-allowed;
 }
+
+/* Galeria de Imagens */
+.imageGallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.imageCard {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  transition: all 0.2s ease;
+  background: var(--bg);
+}
+
+.imageCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px oklch(0.18 0.01 60 / 0.1);
+}
+
+.imageCard img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.imageCardBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.imageCardBtn:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: scale(1.05);
+}
+
+.imageCardBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.imageEmpty {
+  font-size: 13px;
+  opacity: 0.6;
+  padding: 12px 0;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+.uploadInput {
+  display: block;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.uploadInput:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.uploadInput:disabled {
+  background: var(--surface-muted);
+  color: var(--fg-muted);
+  cursor: not-allowed;
+}
+
+.uploadHint {
+  margin-top: 8px;
+  display: block;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+/* Abas */
+.tabsContainer {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+
+.tabButton {
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+
+.tabButton:hover {
+  color: var(--fg);
+  background: var(--surface);
+}
+
+.tabButton.tabActive {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Ações de Formulário */
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
