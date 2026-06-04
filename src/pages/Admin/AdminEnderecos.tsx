@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import enderecoService, { Endereco } from '../../services/enderecoService'
+import { useFormErrors } from '../../hooks/useFormErrors'
+import { isValidCep } from '../../utils/validators'
 import * as Icons from '../../components/atoms/Icon/Icon'
-import { formatCep, unformatCep, isValidCep } from '../../utils/cepFormatter'
+import { formatCep, unformatCep } from '../../utils/cepFormatter'
 import styles from './Admin.module.css'
 
 interface EnderecoForm {
@@ -37,6 +39,7 @@ export default function AdminEnderecos() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<EnderecoForm>(defaultForm)
   const [cepSearching, setCepSearching] = useState(false)
+  const { errors, clearError, clearAll, validate } = useFormErrors<Record<string, string>>()
 
   useEffect(() => {
     carregarDados()
@@ -100,10 +103,17 @@ export default function AdminEnderecos() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!form.rua || !form.numero || !form.bairro || !form.cidade || !form.estado) {
-      alert('Preencha os campos obrigatórios')
-      return
-    }
+
+    const valido = validate([
+      { field: 'rua', value: form.rua, required: true },
+      { field: 'numero', value: form.numero, required: true },
+      { field: 'bairro', value: form.bairro, required: true },
+      { field: 'cidade', value: form.cidade, required: true },
+      { field: 'estado', value: form.estado, required: true },
+      { field: 'cep', value: form.cep, format: (val) => !val || isValidCep(val), custom: (val) => val && !isValidCep(val) ? 'CEP inválido' : null },
+    ])
+
+    if (!valido) return
 
     try {
       const payload: Endereco = {
@@ -123,6 +133,7 @@ export default function AdminEnderecos() {
       }
       await carregarDados()
       resetForm()
+      clearAll()
       setShowForm(false)
     } catch (err) {
       console.error('Erro:', err)
@@ -186,9 +197,11 @@ export default function AdminEnderecos() {
                 type="text"
                 placeholder="00000-000"
                 value={form.cep}
-                onChange={(e) => handleCepChange(e.target.value)}
+                onChange={(e) => { clearError('cep'); handleCepChange(e.target.value) }}
                 disabled={cepSearching}
+                className={errors.cep ? styles.inputError : ''}
               />
+              {errors.cep && <span className={styles.fieldError}>{errors.cep}</span>}
             </div>
 
             <div className={styles.formGroup}>
@@ -196,9 +209,10 @@ export default function AdminEnderecos() {
               <input
                 type="text"
                 value={form.rua}
-                onChange={(e) => setForm({ ...form, rua: e.target.value })}
-                required
+                onChange={(e) => { clearError('rua'); setForm({ ...form, rua: e.target.value }) }}
+                className={errors.rua ? styles.inputError : ''}
               />
+              {errors.rua && <span className={styles.fieldError}>{errors.rua}</span>}
             </div>
 
             <div className={styles.formGroup}>
@@ -206,9 +220,10 @@ export default function AdminEnderecos() {
               <input
                 type="text"
                 value={form.numero}
-                onChange={(e) => setForm({ ...form, numero: e.target.value })}
-                required
+                onChange={(e) => { clearError('numero'); setForm({ ...form, numero: e.target.value }) }}
+                className={errors.numero ? styles.inputError : ''}
               />
+              {errors.numero && <span className={styles.fieldError}>{errors.numero}</span>}
             </div>
 
             <div className={styles.formGroup}>
@@ -217,7 +232,7 @@ export default function AdminEnderecos() {
                 type="text"
                 placeholder="Apto, Sala, etc."
                 value={form.complemento}
-                onChange={(e) => setForm({ ...form, complemento: e.target.value })}
+                onChange={(e) => { clearError('complemento'); setForm({ ...form, complemento: e.target.value }) }}
               />
             </div>
 
@@ -226,9 +241,10 @@ export default function AdminEnderecos() {
               <input
                 type="text"
                 value={form.bairro}
-                onChange={(e) => setForm({ ...form, bairro: e.target.value })}
-                required
+                onChange={(e) => { clearError('bairro'); setForm({ ...form, bairro: e.target.value }) }}
+                className={errors.bairro ? styles.inputError : ''}
               />
+              {errors.bairro && <span className={styles.fieldError}>{errors.bairro}</span>}
             </div>
 
             <div className={styles.formGroup}>
@@ -236,17 +252,18 @@ export default function AdminEnderecos() {
               <input
                 type="text"
                 value={form.cidade}
-                onChange={(e) => setForm({ ...form, cidade: e.target.value })}
-                required
+                onChange={(e) => { clearError('cidade'); setForm({ ...form, cidade: e.target.value }) }}
+                className={errors.cidade ? styles.inputError : ''}
               />
+              {errors.cidade && <span className={styles.fieldError}>{errors.cidade}</span>}
             </div>
 
             <div className={styles.formGroup}>
               <label>Estado *</label>
               <select
                 value={form.estado}
-                onChange={(e) => setForm({ ...form, estado: e.target.value })}
-                required
+                onChange={(e) => { clearError('estado'); setForm({ ...form, estado: e.target.value }) }}
+                className={errors.estado ? styles.inputError : ''}
               >
                 <option value="">Selecione um estado</option>
                 {ESTADOS.map((estado) => (
@@ -255,6 +272,7 @@ export default function AdminEnderecos() {
                   </option>
                 ))}
               </select>
+              {errors.estado && <span className={styles.fieldError}>{errors.estado}</span>}
             </div>
 
             <div className="form-actions">
