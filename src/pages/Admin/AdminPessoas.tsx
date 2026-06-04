@@ -450,7 +450,7 @@ export default function AdminPessoas() {
             )}
 
             {editingId && pessoaEnderecos.length > 0 ? (
-              <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
+              <div className={styles.tableContainer} style={{ marginBottom: '1.5rem' }}>
                 <table className={styles.table}>
                   <thead>
                     <tr>
@@ -486,9 +486,9 @@ export default function AdminPessoas() {
                 </table>
               </div>
             ) : editingId ? (
-              <p style={{ color: '#999', marginBottom: '1rem' }}>Nenhum endereço vinculado</p>
+              <p style={{ color: '#999', marginBottom: '1.5rem' }}>Nenhum endereço vinculado</p>
             ) : (
-              <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
+              <div className={styles.tableContainer} style={{ marginBottom: '1.5rem' }}>
                 <table className={styles.table}>
                   <thead>
                     <tr>
@@ -511,72 +511,70 @@ export default function AdminPessoas() {
               </div>
             )}
 
-            {editingId && (
-              <>
-                {!showEnderecoSelect ? (
+            {editingId && !showEnderecoSelect && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowEnderecoSelect(true)
+                  setEnderecoPrincipal(false)
+                  setSelectedEnderecoId(null)
+                }}
+              >
+                + Adicionar Endereço
+              </button>
+            )}
+
+            {editingId && showEnderecoSelect && (
+              <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                <div className={styles.formGroup}>
+                  <AsyncSearchSelect
+                    label="Endereço"
+                    placeholder="Buscar endereço..."
+                    value={selectedEnderecoId}
+                    onChange={(value) => setSelectedEnderecoId(value ? Number(value) : null)}
+                    onSearch={buscarEnderecos}
+                    minChars={0}
+                    initialOptions={enderecos.filter(e => e.id).map(e => ({
+                      id: e.id!,
+                      label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
+                    }))}
+                  />
+                </div>
+                <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="checkbox"
+                    id="enderecoPrincipal"
+                    checked={enderecoPrincipal}
+                    onChange={(e) => setEnderecoPrincipal(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <label htmlFor="enderecoPrincipal" style={{ cursor: 'pointer', marginBottom: '0' }}>
+                    Marcar como endereço principal
+                  </label>
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleAdicionarEndereco}
+                    disabled={!selectedEnderecoId}
+                  >
+                    Confirmar
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => {
-                      setShowEnderecoSelect(true)
-                      setEnderecoPrincipal(false)
+                      setShowEnderecoSelect(false)
                       setSelectedEnderecoId(null)
+                      setEnderecoPrincipal(false)
                     }}
                   >
-                    + Adicionar Endereço
+                    Cancelar
                   </button>
-                ) : (
-                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-                    <div className={styles.formGroup}>
-                      <AsyncSearchSelect
-                        label="Endereço"
-                        placeholder="Buscar endereço..."
-                        value={selectedEnderecoId}
-                        onChange={(value) => setSelectedEnderecoId(value ? Number(value) : null)}
-                        onSearch={buscarEnderecos}
-                        minChars={0}
-                        initialOptions={enderecos.filter(e => e.id).map(e => ({
-                          id: e.id!,
-                          label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
-                        }))}
-                      />
-                    </div>
-                    <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <input
-                        type="checkbox"
-                        id="enderecoPrincipal"
-                        checked={enderecoPrincipal}
-                        onChange={(e) => setEnderecoPrincipal(e.target.checked)}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <label htmlFor="enderecoPrincipal" style={{ cursor: 'pointer', marginBottom: '0' }}>
-                        Marcar como endereço principal
-                      </label>
-                    </div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={handleAdicionarEndereco}
-                        disabled={!selectedEnderecoId}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          setShowEnderecoSelect(false)
-                          setSelectedEnderecoId(null)
-                          setEnderecoPrincipal(false)
-                        }}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </>
+                </div>
+              </div>
             )}
           </div>
         </div>
