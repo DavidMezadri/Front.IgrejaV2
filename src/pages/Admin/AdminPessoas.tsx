@@ -440,122 +440,145 @@ export default function AdminPessoas() {
             </div>
           </form>
 
-          {!editingId && (
-            <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
-              <p style={{ color: '#666', fontSize: '14px' }}>
+          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+            <h4>Endereços da Pessoa</h4>
+
+            {!editingId && (
+              <p style={{ color: '#666', fontSize: '14px', marginBottom: '1rem' }}>
                 💡 Primeiro crie a pessoa para poder adicionar endereços.
               </p>
-            </div>
-          )}
+            )}
 
-          {editingId && (
-            <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
-              <h4>Endereços da Pessoa</h4>
-              {pessoaEnderecos.length > 0 ? (
-                <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>Endereço</th>
-                        <th>Bairro</th>
-                        <th>Cidade/Estado</th>
-                        <th>CEP</th>
-                        <th>Status</th>
-                        <th className={styles.actionsCell}>Ações</th>
+            {editingId && pessoaEnderecos.length > 0 ? (
+              <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Endereço</th>
+                      <th>Bairro</th>
+                      <th>Cidade/Estado</th>
+                      <th>CEP</th>
+                      <th>Status</th>
+                      <th className={styles.actionsCell}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pessoaEnderecos.map((pe) => (
+                      <tr key={pe.id} className={!pe.principal ? styles.secondaryRow : ''}>
+                        <td><b>{pe.endereco?.rua}, {pe.endereco?.numero}</b></td>
+                        <td>{pe.endereco?.bairro || '—'}</td>
+                        <td>{pe.endereco?.cidade}/{pe.endereco?.estado}</td>
+                        <td>{pe.endereco?.cep ? formatCep(pe.endereco.cep) : '—'}</td>
+                        <td><Badge variant={pe.principal ? 'ok' : 'default'}>{pe.principal ? 'Principal' : 'Secundário'}</Badge></td>
+                        <td className={styles.actionsCell}>
+                          <button
+                            type="button"
+                            className={`${styles.actionBtn} ${styles.danger}`}
+                            onClick={() => handleRemoverEndereco(pe.id)}
+                            title="Remover"
+                          >
+                            <Icons.TrashIcon size={16} />
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {pessoaEnderecos.map((pe) => (
-                        <tr key={pe.id} className={!pe.principal ? styles.secondaryRow : ''}>
-                          <td><b>{pe.endereco?.rua}, {pe.endereco?.numero}</b></td>
-                          <td>{pe.endereco?.bairro || '—'}</td>
-                          <td>{pe.endereco?.cidade}/{pe.endereco?.estado}</td>
-                          <td>{pe.endereco?.cep ? formatCep(pe.endereco.cep) : '—'}</td>
-                          <td><Badge variant={pe.principal ? 'ok' : 'default'}>{pe.principal ? 'Principal' : 'Secundário'}</Badge></td>
-                          <td className={styles.actionsCell}>
-                            <button
-                              type="button"
-                              className={`${styles.actionBtn} ${styles.danger}`}
-                              onClick={() => handleRemoverEndereco(pe.id)}
-                              title="Remover"
-                            >
-                              <Icons.TrashIcon size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p style={{ color: '#999', marginBottom: '1rem' }}>Nenhum endereço vinculado</p>
-              )}
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : editingId ? (
+              <p style={{ color: '#999', marginBottom: '1rem' }}>Nenhum endereço vinculado</p>
+            ) : (
+              <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Endereço</th>
+                      <th>Bairro</th>
+                      <th>Cidade/Estado</th>
+                      <th>CEP</th>
+                      <th>Status</th>
+                      <th className={styles.actionsCell}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '20px', color: '#999' }}>
+                        Nenhum endereço cadastrado
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-              {!showEnderecoSelect ? (
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowEnderecoSelect(true)
-                    setEnderecoPrincipal(false)
-                    setSelectedEnderecoId(null)
-                  }}
-                >
-                  + Adicionar Endereço
-                </button>
-              ) : (
-                <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-                  <div className={styles.formGroup}>
-                    <AsyncSearchSelect
-                      label="Endereço"
-                      placeholder="Buscar endereço..."
-                      value={selectedEnderecoId}
-                      onChange={(value) => setSelectedEnderecoId(value ? Number(value) : null)}
-                      onSearch={buscarEnderecos}
-                      minChars={0}
-                      initialOptions={enderecos.filter(e => e.id).map(e => ({
-                        id: e.id!,
-                        label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
-                      }))}
-                    />
+            {editingId && (
+              <>
+                {!showEnderecoSelect ? (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowEnderecoSelect(true)
+                      setEnderecoPrincipal(false)
+                      setSelectedEnderecoId(null)
+                    }}
+                  >
+                    + Adicionar Endereço
+                  </button>
+                ) : (
+                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                    <div className={styles.formGroup}>
+                      <AsyncSearchSelect
+                        label="Endereço"
+                        placeholder="Buscar endereço..."
+                        value={selectedEnderecoId}
+                        onChange={(value) => setSelectedEnderecoId(value ? Number(value) : null)}
+                        onSearch={buscarEnderecos}
+                        minChars={0}
+                        initialOptions={enderecos.filter(e => e.id).map(e => ({
+                          id: e.id!,
+                          label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
+                        }))}
+                      />
+                    </div>
+                    <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input
+                        type="checkbox"
+                        id="enderecoPrincipal"
+                        checked={enderecoPrincipal}
+                        onChange={(e) => setEnderecoPrincipal(e.target.checked)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <label htmlFor="enderecoPrincipal" style={{ cursor: 'pointer', marginBottom: '0' }}>
+                        Marcar como endereço principal
+                      </label>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={handleAdicionarEndereco}
+                        disabled={!selectedEnderecoId}
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setShowEnderecoSelect(false)
+                          setSelectedEnderecoId(null)
+                          setEnderecoPrincipal(false)
+                        }}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
-                  <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <input
-                      type="checkbox"
-                      id="enderecoPrincipal"
-                      checked={enderecoPrincipal}
-                      onChange={(e) => setEnderecoPrincipal(e.target.checked)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <label htmlFor="enderecoPrincipal" style={{ cursor: 'pointer', marginBottom: '0' }}>
-                      Marcar como endereço principal
-                    </label>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handleAdicionarEndereco}
-                      disabled={!selectedEnderecoId}
-                    >
-                      Confirmar
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => {
-                        setShowEnderecoSelect(false)
-                        setSelectedEnderecoId(null)
-                        setEnderecoPrincipal(false)
-                      }}
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
       )}
 
