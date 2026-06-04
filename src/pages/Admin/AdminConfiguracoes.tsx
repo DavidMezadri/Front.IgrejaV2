@@ -4,32 +4,26 @@ import GenericForm, { FormField } from '../../components/molecules/GenericForm/G
 import styles from './Admin.module.css'
 
 interface Config {
-  nomeIgreja: string
-  email: string
-  telefone: string
-  endereco: string
-  lema: string
-  mensagemBoasVindas: string
   [key: string]: string | boolean | number
 }
 
 const FORM_FIELDS: FormField[] = [
-  { name: 'nomeIgreja', label: 'Nome da Igreja', type: 'text', required: true },
-  { name: 'email', label: 'Email', type: 'email', required: true },
-  { name: 'telefone', label: 'Telefone', type: 'tel' },
-  { name: 'endereco', label: 'Endereço', type: 'text' },
-  { name: 'lema', label: 'Lema da Igreja', type: 'text' },
-  { name: 'mensagemBoasVindas', label: 'Mensagem de Boas-vindas', type: 'textarea' },
+  { name: 'igreja.nome', label: 'Nome da Igreja', type: 'text', required: true },
+  { name: 'igreja.email', label: 'Email', type: 'email', required: true },
+  { name: 'igreja.telefone', label: 'Telefone', type: 'tel' },
+  { name: 'igreja.endereco', label: 'Endereço', type: 'text' },
+  { name: 'igreja.lema', label: 'Lema da Igreja', type: 'text' },
+  { name: 'home.mensagemBoasVindas', label: 'Mensagem de Boas-vindas', type: 'textarea' },
 ]
 
 export default function AdminConfiguracoes() {
   const [config, setConfig] = useState<Config>({
-    nomeIgreja: 'Comunidade da Graça',
-    email: 'contato@comunidadedagraca.org',
-    telefone: '(11) 3000-0000',
-    endereco: 'Rua das Acácias, 248 — Centro, São Paulo/SP',
-    lema: 'Uma igreja para a cidade.',
-    mensagemBoasVindas: 'Bem-vindo à nossa comunidade!',
+    'igreja.nome': 'Comunidade da Graça',
+    'igreja.email': 'contato@comunidadedagraca.org',
+    'igreja.telefone': '(11) 3000-0000',
+    'igreja.endereco': 'Rua das Acácias, 248 — Centro, São Paulo/SP',
+    'igreja.lema': 'Uma igreja para a cidade.',
+    'home.mensagemBoasVindas': 'Bem-vindo à nossa comunidade!',
   })
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -98,10 +92,10 @@ export default function AdminConfiguracoes() {
 
       <div className={`${styles.info} ${styles.infoSection}`}>
         <h3>Informações do Sistema</h3>
-        <p><b>Nome:</b> {config.nomeIgreja}</p>
-        <p><b>Email:</b> {config.email}</p>
-        <p><b>Telefone:</b> {config.telefone}</p>
-        <p><b>Endereço:</b> {config.endereco}</p>
+        <p><b>Nome:</b> {config['igreja.nome']}</p>
+        <p><b>Email:</b> {config['igreja.email']}</p>
+        <p><b>Telefone:</b> {config['igreja.telefone']}</p>
+        <p><b>Endereço:</b> {config['igreja.endereco']}</p>
       </div>
     </div>
   )

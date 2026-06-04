@@ -20,6 +20,7 @@ export default function AdminFamilias() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<Familia>({ nome: '', observacoes: '', responsavelId: null })
+  const [selectedFamiliaId, setSelectedFamiliaId] = useState<number | null>(null)
 
   async function buscarPessoas(query: string) {
     try {
@@ -109,6 +110,20 @@ export default function AdminFamilias() {
     setShowForm(true)
   }
 
+  const getResponsavelNome = (id?: number | null) => {
+    if (!id) return '—'
+    return pessoas.find(p => p.id === id)?.nome || '—'
+  }
+
+  const getPessoasDaFamilia = (familiaId?: number) => {
+    if (!familiaId) return []
+    return pessoas.filter(p => p.familiaId === familiaId)
+  }
+
+  const familiaDetalhes = selectedFamiliaId
+    ? familias.find(f => f.id === selectedFamiliaId)
+    : null
+
   if (loading) return <div className="p-16">Carregando...</div>
 
   return (
@@ -179,39 +194,122 @@ export default function AdminFamilias() {
         </div>
       )}
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Membros</th>
-              <th>Observações</th>
-              <th className={styles.actionsCell}>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {familias.map(f => (
-              <tr key={f.id}>
-                <td><b>{f.nome}</b></td>
-                <td>{f.membros?.length || 0} membros</td>
-                <td>{f.observacoes || '—'}</td>
-                <td className={styles.actionsCell}>
-                  <button className={styles.actionBtn} onClick={() => handleEdit(f)} title="Editar">
-                    <Icons.EditIcon size={16} />
-                  </button>
-                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(f.id || 0)} title="Deletar">
-                    <Icons.TrashIcon size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {familiaDetalhes ? (
+        <div className={styles.formCard}>
+          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3>{familiaDetalhes.nome}</h3>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setSelectedFamiliaId(null)}
+            >
+              ← Voltar
+            </button>
+          </div>
 
-      <div className={styles.info}>
-        <p><b>Total:</b> {familias.length} famílias cadastradas</p>
-      </div>
+          <div style={{ marginBottom: '20px' }}>
+            <p><b>Responsável:</b> {getResponsavelNome(familiaDetalhes.responsavelId)}</p>
+            <p><b>Observações:</b> {familiaDetalhes.observacoes || '—'}</p>
+          </div>
+
+          <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+            <button
+              className="btn btn-primary"
+              onClick={() => handleEdit(familiaDetalhes)}
+              title="Editar família"
+            >
+              <Icons.EditIcon size={16} /> Editar Família
+            </button>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <h4>Membros da Família ({getPessoasDaFamilia(familiaDetalhes.id).length})</h4>
+          </div>
+
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                  <th>Membro Desde</th>
+                  <th>Status</th>
+                  <th className={styles.actionsCell}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {getPessoasDaFamilia(familiaDetalhes.id).length > 0 ? (
+                  getPessoasDaFamilia(familiaDetalhes.id).map(p => (
+                    <tr key={p.id}>
+                      <td><b>{p.nome}</b></td>
+                      <td>{p.email || '—'}</td>
+                      <td>{p.telefone || '—'}</td>
+                      <td>{p.membroDesde ? new Date(p.membroDesde).toLocaleDateString('pt-BR') : '—'}</td>
+                      <td>{p.ativo ? '✓ Ativo' : 'Inativo'}</td>
+                      <td className={styles.actionsCell}>
+                        <button className={styles.actionBtn} title="Visualizar pessoa">
+                          <Icons.EditIcon size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '20px' }}>
+                      Nenhuma pessoa cadastrada nesta família
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Membros</th>
+                  <th>Responsável</th>
+                  <th>Observações</th>
+                  <th className={styles.actionsCell}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {familias.map(f => (
+                  <tr key={f.id}>
+                    <td><b>{f.nome}</b></td>
+                    <td>{getPessoasDaFamilia(f.id).length} membros</td>
+                    <td>{getResponsavelNome(f.responsavelId)}</td>
+                    <td>{f.observacoes || '—'}</td>
+                    <td className={styles.actionsCell}>
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => setSelectedFamiliaId(f.id || null)}
+                        title="Ver detalhes"
+                      >
+                        <Icons.HomeIcon size={16} />
+                      </button>
+                      <button className={styles.actionBtn} onClick={() => handleEdit(f)} title="Editar">
+                        <Icons.EditIcon size={16} />
+                      </button>
+                      <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(f.id || 0)} title="Deletar">
+                        <Icons.TrashIcon size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={styles.info}>
+            <p><b>Total:</b> {familias.length} famílias cadastradas</p>
+          </div>
+        </>
+      )}
     </div>
   )
 }

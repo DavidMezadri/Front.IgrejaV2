@@ -7,6 +7,8 @@ import styles from './AdminLayout.module.css'
 const ADMIN_SECTIONS = [
   { id: 'admin', path: '/admin', label: 'Dashboard', icon: Icons.HomeIcon },
   { id: 'cms', path: '/admin/cms', label: 'CMS', icon: Icons.EditIcon, desc: 'Editar conteúdo das páginas públicas' },
+  { id: 'igrejas', path: '/admin/igrejas', label: 'Igrejas', icon: Icons.HomeIcon, desc: 'Gerenciar dados de igrejas' },
+  { id: 'enderecos', path: '/admin/enderecos', label: 'Endereços', icon: Icons.HomeIcon, desc: 'Gerenciar endereços cadastrados' },
   { id: 'pessoas', path: '/admin/pessoas', label: 'Pessoas', icon: Icons.UsersIcon, desc: 'Gerenciar membros da comunidade' },
   { id: 'familias', path: '/admin/familias', label: 'Famílias', icon: Icons.UsersIcon, desc: 'Organizar famílias cadastradas' },
   { id: 'tiposEvento', path: '/admin/tipos-evento', label: 'Tipos de Evento', icon: Icons.CalendarIcon, desc: 'Categorias de eventos' },

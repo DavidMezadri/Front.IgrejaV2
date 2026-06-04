@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import pessoasService from '../../services/pessoasService'
 import familiasService from '../../services/familiasService'
+import enderecoService, { Endereco } from '../../services/enderecoService'
+import pessoaEnderecoService from '../../services/pessoaEnderecoService'
 import { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import Select from '../../components/atoms/Select/Select'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
+import { formatCep } from '../../utils/cepFormatter'
 import styles from './Admin.module.css'
 
 interface PessoaForm {
@@ -21,8 +24,19 @@ interface PessoaForm {
   familiaId: string
 }
 
-interface Pessoa extends PessoaForm {
+interface Pessoa {
   id?: number
+  nome: string
+  dataNascimento?: string
+  sexo?: string
+  email: string
+  telefone?: string
+  dataBatismo?: string
+  membroDesde: string
+  estadoCivil?: string
+  observacoes?: string
+  familiaId?: string | number
+  enderecoId?: string | number
   ativo?: boolean
 }
 
@@ -49,6 +63,12 @@ export default function AdminPessoas() {
     observacoes: '',
     familiaId: '',
   })
+  const [enderecos, setEnderecos] = useState<Endereco[]>([])
+  const [pessoaEnderecos, setPessoaEnderecos] = useState<any[]>([])
+  const [todosEnderecosPessoas, setTodosEnderecosPessoas] = useState<{ [key: number]: any[] }>({})
+  const [showEnderecoSelect, setShowEnderecoSelect] = useState(false)
+  const [selectedEnderecoId, setSelectedEnderecoId] = useState<number | null>(null)
+  const [enderecoPrincipal, setEnderecoPrincipal] = useState(false)
 
   const SEXO_OPTIONS = [
     { id: 1, nome: 'Masculino' },
@@ -107,12 +127,29 @@ export default function AdminPessoas() {
   async function carregarDados() {
     setLoading(true)
     try {
-      const [pessoasData, familiasData] = await Promise.all([
+      const [pessoasData, familiasData, enderecosData] = await Promise.all([
         pessoasService.list(),
-        familiasService.list()
+        familiasService.list(),
+        enderecoService.list()
       ])
       setPessoas(pessoasData)
       setFamilias(familiasData)
+      setEnderecos(enderecosData)
+
+      // Carregar endereços de todas as pessoas
+      const enderecosMap: { [key: number]: any[] } = {}
+      for (const pessoa of pessoasData) {
+        if (pessoa.id) {
+          try {
+            const enderecos = await pessoaEnderecoService.list(pessoa.id)
+            enderecosMap[pessoa.id] = enderecos
+          } catch (err) {
+            console.error(`Erro ao carregar endereços da pessoa ${pessoa.id}:`, err)
+            enderecosMap[pessoa.id] = []
+          }
+        }
+      }
+      setTodosEnderecosPessoas(enderecosMap)
     } catch (err) {
       console.error('Erro ao carregar:', err)
     } finally {
@@ -134,7 +171,35 @@ export default function AdminPessoas() {
       familiaId: '',
     })
     setEditingId(null)
+    setPessoaEnderecos([])
+    setShowEnderecoSelect(false)
+    setSelectedEnderecoId(null)
   }
+
+  async function buscarEnderecos(query: string) {
+    try {
+      if (!query.trim()) {
+        return enderecos.map(e => ({
+          id: e.id,
+          label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
+        }))
+      }
+      const results = await enderecoService.list()
+      return results
+        .filter((e: any) => {
+          const fullAddress = `${e.rua} ${e.numero} ${e.bairro} ${e.cidade}`.toLowerCase()
+          return fullAddress.includes(query.toLowerCase())
+        })
+        .map((e: any) => ({
+          id: e.id,
+          label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
+        }))
+    } catch (err) {
+      console.error('Erro ao buscar endereços:', err)
+      return []
+    }
+  }
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -170,13 +235,52 @@ export default function AdminPessoas() {
     }
   }
 
+  async function carregarEnderecosPessoa(pessoaId: number) {
+    try {
+      const enderecos = await pessoaEnderecoService.list(pessoaId)
+      setPessoaEnderecos(enderecos)
+    } catch (err) {
+      console.error('Erro ao carregar endereços:', err)
+      setPessoaEnderecos([])
+    }
+  }
+
+  async function handleAdicionarEndereco() {
+    if (!selectedEnderecoId || !editingId) return
+
+    try {
+      await pessoaEnderecoService.add(editingId, selectedEnderecoId, enderecoPrincipal)
+      setSelectedEnderecoId(null)
+      setEnderecoPrincipal(false)
+      setShowEnderecoSelect(false)
+      await carregarEnderecosPessoa(editingId)
+    } catch (err) {
+      console.error('Erro ao adicionar endereço:', err)
+      alert('Erro ao adicionar endereço')
+    }
+  }
+
+  async function handleRemoverEndereco(pessoaEnderecoId: number) {
+    if (!confirm('Tem certeza que deseja remover este endereço?')) return
+
+    try {
+      await pessoaEnderecoService.remove(pessoaEnderecoId)
+      if (editingId) {
+        await carregarEnderecosPessoa(editingId)
+      }
+    } catch (err) {
+      console.error('Erro ao remover endereço:', err)
+      alert('Erro ao remover endereço')
+    }
+  }
+
   function handleEdit(pessoa: Pessoa) {
     setForm({
       nome: pessoa.nome,
       dataNascimento: toDateInputValue(pessoa.dataNascimento),
       sexo: String(pessoa.sexo || ''),
       email: pessoa.email,
-      telefone: pessoa.telefone,
+      telefone: pessoa.telefone || '',
       dataBatismo: toDateInputValue(pessoa.dataBatismo),
       membroDesde: toDateInputValue(pessoa.membroDesde),
       estadoCivil: String(pessoa.estadoCivil || ''),
@@ -184,11 +288,22 @@ export default function AdminPessoas() {
       familiaId: String(pessoa.familiaId || ''),
     })
     setEditingId(pessoa.id || null)
+    if (pessoa.id) {
+      carregarEnderecosPessoa(pessoa.id)
+    }
     setShowForm(true)
     window.scrollTo(0, 0)
   }
 
   const getFamiliaName = (id: string | number | undefined) => familias.find(f => f.id === id)?.nome || '—'
+
+  const getEnderecoPrincipal = (pessoaId: string | number | undefined) => {
+    if (!pessoaId) return '—'
+    const enderecos = todosEnderecosPessoas[Number(pessoaId)] || []
+    const principal = enderecos.find(pe => pe.principal)
+    if (!principal?.endereco) return '—'
+    return `${principal.endereco.rua}, ${principal.endereco.numero}`
+  }
 
   async function buscarFamilias(query: string) {
     try {
@@ -230,7 +345,7 @@ export default function AdminPessoas() {
           <h3>{editingId ? 'Editar Pessoa' : 'Nova Pessoa'}</h3>
           <form onSubmit={handleSubmit} className={styles.form}>
             {FORM_FIELDS.map((field) => {
-              // Renderiza Família antes de Observações
+              // Renderiza Família e Endereço antes de Observações
               if (field.name === 'observacoes') {
                 return (
                   <>
@@ -324,6 +439,123 @@ export default function AdminPessoas() {
               </button>
             </div>
           </form>
+
+          {!editingId && (
+            <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+              <p style={{ color: '#666', fontSize: '14px' }}>
+                💡 Primeiro crie a pessoa para poder adicionar endereços.
+              </p>
+            </div>
+          )}
+
+          {editingId && (
+            <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+              <h4>Endereços da Pessoa</h4>
+              {pessoaEnderecos.length > 0 ? (
+                <div className={styles.tableContainer} style={{ marginBottom: '1rem' }}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Endereço</th>
+                        <th>Bairro</th>
+                        <th>Cidade/Estado</th>
+                        <th>CEP</th>
+                        <th>Status</th>
+                        <th className={styles.actionsCell}>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pessoaEnderecos.map((pe) => (
+                        <tr key={pe.id} className={!pe.principal ? styles.secondaryRow : ''}>
+                          <td><b>{pe.endereco?.rua}, {pe.endereco?.numero}</b></td>
+                          <td>{pe.endereco?.bairro || '—'}</td>
+                          <td>{pe.endereco?.cidade}/{pe.endereco?.estado}</td>
+                          <td>{pe.endereco?.cep ? formatCep(pe.endereco.cep) : '—'}</td>
+                          <td><Badge variant={pe.principal ? 'ok' : 'default'}>{pe.principal ? 'Principal' : 'Secundário'}</Badge></td>
+                          <td className={styles.actionsCell}>
+                            <button
+                              type="button"
+                              className={`${styles.actionBtn} ${styles.danger}`}
+                              onClick={() => handleRemoverEndereco(pe.id)}
+                              title="Remover"
+                            >
+                              <Icons.TrashIcon size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p style={{ color: '#999', marginBottom: '1rem' }}>Nenhum endereço vinculado</p>
+              )}
+
+              {!showEnderecoSelect ? (
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowEnderecoSelect(true)
+                    setEnderecoPrincipal(false)
+                    setSelectedEnderecoId(null)
+                  }}
+                >
+                  + Adicionar Endereço
+                </button>
+              ) : (
+                <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+                  <div className={styles.formGroup}>
+                    <AsyncSearchSelect
+                      label="Endereço"
+                      placeholder="Buscar endereço..."
+                      value={selectedEnderecoId}
+                      onChange={(value) => setSelectedEnderecoId(value ? Number(value) : null)}
+                      onSearch={buscarEnderecos}
+                      minChars={0}
+                      initialOptions={enderecos.filter(e => e.id).map(e => ({
+                        id: e.id!,
+                        label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
+                      }))}
+                    />
+                  </div>
+                  <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="checkbox"
+                      id="enderecoPrincipal"
+                      checked={enderecoPrincipal}
+                      onChange={(e) => setEnderecoPrincipal(e.target.checked)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <label htmlFor="enderecoPrincipal" style={{ cursor: 'pointer', marginBottom: '0' }}>
+                      Marcar como endereço principal
+                    </label>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleAdicionarEndereco}
+                      disabled={!selectedEnderecoId}
+                    >
+                      Confirmar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setShowEnderecoSelect(false)
+                        setSelectedEnderecoId(null)
+                        setEnderecoPrincipal(false)
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -334,6 +566,7 @@ export default function AdminPessoas() {
               <th>Nome</th>
               <th>E-mail</th>
               <th>Família</th>
+              <th>Endereço Principal</th>
               <th>Telefone</th>
               <th>Status</th>
               <th className={styles.actionsCell}>Ações</th>
@@ -345,6 +578,7 @@ export default function AdminPessoas() {
                 <td><b>{p.nome}</b></td>
                 <td>{p.email}</td>
                 <td>{getFamiliaName(p.familiaId)}</td>
+                <td>{getEnderecoPrincipal(p.id)}</td>
                 <td>{p.telefone || '—'}</td>
                 <td><Badge variant={p.ativo ? 'ok' : 'danger'}>{p.ativo ? 'Ativo' : 'Inativo'}</Badge></td>
                 <td className={styles.actionsCell}>

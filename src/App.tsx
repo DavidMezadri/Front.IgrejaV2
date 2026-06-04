@@ -25,6 +25,8 @@ import AdminConfiguracoes from './pages/Admin/AdminConfiguracoes'
 import AdminTraducoes from './pages/Admin/AdminTraducoes'
 import AdminVersiculos from './pages/Admin/AdminVersiculos'
 import AdminCMS from './pages/Admin/AdminCMS'
+import AdminIgrejas from './pages/Admin/AdminIgrejas'
+import AdminEnderecos from './pages/Admin/AdminEnderecos'
 
 export default function App() {
   const { theme, toggleTheme } = useTheme()
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/admin/*" element={<AdminLayout theme={theme} toggleTheme={toggleTheme} />}>
             <Route index element={<AdminHome />} />
             <Route path="endpoints" element={<AdminEndpoints />} />
+            <Route path="igrejas" element={<AdminIgrejas />} />
+            <Route path="enderecos" element={<AdminEnderecos />} />
             <Route path="pessoas" element={<AdminPessoas />} />
             <Route path="familias" element={<AdminFamilias />} />
             <Route path="tipos-evento" element={<AdminTiposEvento />} />

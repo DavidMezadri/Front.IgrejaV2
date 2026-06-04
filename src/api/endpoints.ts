@@ -29,6 +29,11 @@ export const EP = {
     REMOVE: ((id: string | number) => `/api/pessoas/${id}`) as EndpointId,
     SEARCH: '/api/pessoas/buscar',
   },
+  PESSOAS_ENDERECOS: {
+    LIST:   ((pessoaId: string | number) => `/api/enderecos/pessoas/${pessoaId}`) as EndpointId,
+    ADD:    '/api/enderecos/pessoas',
+    REMOVE: ((pessoaEnderecoId: string | number) => `/api/enderecos/pessoas/${pessoaEnderecoId}`) as EndpointId,
+  },
   FAMILIAS: {
     LIST:   '/api/familias',
     ONE:    ((id: string | number) => `/api/familias/${id}`) as EndpointId,
@@ -75,5 +80,19 @@ export const EP = {
     IMAGEM:        '/api/upload/imagem',
     REMOVE_IMAGEM: ((nomeArquivo: string) => `/api/upload/imagem/${nomeArquivo}`) as EndpointId,
     LIST_IMAGENS:  '/api/upload/imagens',
+  },
+  IGREJAS: {
+    LIST:   '/api/igrejas',
+    ONE:    ((id: string | number) => `/api/igrejas/${id}`) as EndpointId,
+    CREATE: '/api/igrejas',
+    UPDATE: ((id: string | number) => `/api/igrejas/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/igrejas/${id}`) as EndpointId,
+  },
+  ENDERECOS: {
+    LIST:   '/api/enderecos',
+    ONE:    ((id: string | number) => `/api/enderecos/${id}`) as EndpointId,
+    CREATE: '/api/enderecos',
+    UPDATE: ((id: string | number) => `/api/enderecos/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/api/enderecos/${id}`) as EndpointId,
   },
 }
