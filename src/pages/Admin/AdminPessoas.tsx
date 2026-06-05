@@ -4,7 +4,7 @@ import familiasService from '../../services/familiasService'
 import enderecoService, { Endereco } from '../../services/enderecoService'
 import pessoaEnderecoService from '../../services/pessoaEnderecoService'
 import { useFormErrors } from '../../hooks/useFormErrors'
-import { isValidEmail } from '../../utils/validators'
+import { isValidEmail, isValidDateRange, isValidTelefone } from '../../utils/validators'
 import { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import Select from '../../components/atoms/Select/Select'
@@ -210,7 +210,10 @@ export default function AdminPessoas() {
     const valido = validate([
       { field: 'nome', value: form.nome, required: true },
       { field: 'email', value: form.email, required: true, format: isValidEmail },
-      { field: 'membroDesde', value: form.membroDesde, required: true },
+      { field: 'membroDesde', value: form.membroDesde, required: true, custom: (val) => !isValidDateRange(val, 1900) ? 'Data de membro inválida' : null },
+      { field: 'dataNascimento', value: form.dataNascimento, custom: (val) => val && !isValidDateRange(val, 1900) ? 'Data de nascimento inválida (ano deve ser entre 1900 e hoje)' : null },
+      { field: 'dataBatismo', value: form.dataBatismo, custom: (val) => val && !isValidDateRange(val, 1900) ? 'Data de batismo inválida' : null },
+      { field: 'telefone', value: form.telefone, custom: (val) => val && !isValidTelefone(val) ? 'Telefone inválido (use formato com dígitos, espaços, hífens ou parênteses)' : null },
     ])
 
     if (!valido) return

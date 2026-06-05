@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import igrejaService, { Igreja } from '../../services/igrejaService'
 import enderecoService, { Endereco } from '../../services/enderecoService'
 import { useFormErrors } from '../../hooks/useFormErrors'
-import { isValidEmail } from '../../utils/validators'
+import { isValidEmail, isValidTelefone } from '../../utils/validators'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
@@ -96,6 +96,7 @@ export default function AdminIgrejas() {
     const valido = validate([
       { field: 'nome', value: form.nome, required: true },
       { field: 'email', value: form.email, required: true, format: isValidEmail },
+      { field: 'telefone', value: form.telefone, custom: (val) => val && !isValidTelefone(val) ? 'Telefone inválido' : null },
     ])
 
     if (!valido) return

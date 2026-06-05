@@ -16,6 +16,16 @@ interface EnderecoForm {
   cep: string
 }
 
+interface EnderecoForm {
+  rua: string
+  complemento: string
+  numero: string
+  bairro: string
+  cidade: string
+  estado: string
+  cep: string
+}
+
 const defaultForm: EnderecoForm = {
   rua: '',
   complemento: '',

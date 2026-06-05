@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import configService from '../../services/configService'
-import { isValidEmail } from '../../utils/validators'
+import { isValidEmail, isValidTelefone } from '../../utils/validators'
 import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import styles from './Admin.module.css'
 
@@ -11,7 +11,7 @@ interface Config {
 const FORM_FIELDS: FormField[] = [
   { name: 'igreja.nome', label: 'Nome da Igreja', type: 'text', required: true },
   { name: 'igreja.email', label: 'Email', type: 'email', required: true },
-  { name: 'igreja.telefone', label: 'Telefone', type: 'tel' },
+  { name: 'igreja.telefone', label: 'Telefone', type: 'text' },
   { name: 'igreja.endereco', label: 'Endereço', type: 'text' },
   { name: 'igreja.lema', label: 'Lema da Igreja', type: 'text' },
   { name: 'home.mensagemBoasVindas', label: 'Mensagem de Boas-vindas', type: 'textarea' },
@@ -54,6 +54,9 @@ export default function AdminConfiguracoes() {
     }
     if (!config['igreja.email'] || !isValidEmail(config['igreja.email'].toString())) {
       erros.push('Email válido é obrigatório')
+    }
+    if (config['igreja.telefone'] && !isValidTelefone(config['igreja.telefone'].toString())) {
+      erros.push('Telefone inválido (use formato com dígitos, espaços, hífens ou parênteses)')
     }
 
     if (erros.length > 0) {
