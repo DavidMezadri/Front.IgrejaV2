@@ -18,7 +18,6 @@ const ADMIN_SECTIONS = [
   { id: 'versiculos', path: '/admin/versiculos', label: 'Versículos', icon: Icons.BookIcon, desc: 'Gerenciar versículos da bíblia' },
   { id: 'usuarios', path: '/admin/usuarios', label: 'Usuários', icon: Icons.LoginIcon, desc: 'Gerenciar acesso ao sistema' },
   { id: 'configuracoes', path: '/admin/configuracoes', label: 'Configurações', icon: Icons.SettingsIcon, desc: 'Ajustes gerais do sistema' },
-  { id: 'endpoints', path: '/admin/endpoints', label: 'Endpoints', icon: Icons.SettingsIcon, desc: 'Configurar endpoints da API' },
 ]
 
 export default function AdminLayout({ theme, toggleTheme }) {

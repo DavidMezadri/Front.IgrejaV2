@@ -14,7 +14,6 @@ import Prayer from './pages/Prayer/Prayer'
 import Login from './pages/Login/Login'
 import Signup from './pages/Signup/Signup'
 import AdminHome from './pages/Admin/AdminHome'
-import AdminEndpoints from './pages/Admin/AdminEndpoints'
 import AdminPessoas from './pages/Admin/AdminPessoas'
 import AdminFamilias from './pages/Admin/AdminFamilias'
 import AdminTiposEvento from './pages/Admin/AdminTiposEvento'
@@ -38,7 +37,6 @@ export default function App() {
           {/* Rotas do Admin */}
           <Route path="/admin/*" element={<AdminLayout theme={theme} toggleTheme={toggleTheme} />}>
             <Route index element={<AdminHome />} />
-            <Route path="endpoints" element={<AdminEndpoints />} />
             <Route path="igrejas" element={<AdminIgrejas />} />
             <Route path="enderecos" element={<AdminEnderecos />} />
             <Route path="pessoas" element={<AdminPessoas />} />
