@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import familiasService from '../../services/familiasService'
 import pessoasService from '../../services/pessoasService'
+import { useFormErrors } from '../../hooks/useFormErrors'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
@@ -21,6 +22,7 @@ export default function AdminFamilias() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<Familia>({ nome: '', observacoes: '', responsavelId: null })
   const [selectedFamiliaId, setSelectedFamiliaId] = useState<number | null>(null)
+  const { errors, clearError, clearAll, validate } = useFormErrors<Record<string, string>>()
 
   async function buscarPessoas(query: string) {
     try {
@@ -72,10 +74,12 @@ export default function AdminFamilias() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!form.nome) {
-      alert('Preencha o nome da família')
-      return
-    }
+
+    const valido = validate([
+      { field: 'nome', value: form.nome, required: true },
+    ])
+
+    if (!valido) return
 
     try {
       const payload = toPayload(form)
@@ -86,6 +90,7 @@ export default function AdminFamilias() {
       }
       await carregarDados()
       resetForm()
+      clearAll()
       setShowForm(false)
     } catch (err) {
       console.error('Erro:', err)
@@ -153,9 +158,10 @@ export default function AdminFamilias() {
               <input
                 type="text"
                 value={form.nome}
-                onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                required
+                onChange={(e) => { clearError('nome'); setForm({ ...form, nome: e.target.value }) }}
+                className={errors.nome ? styles.inputError : ''}
               />
+              {errors.nome && <span className={styles.fieldError}>{errors.nome}</span>}
             </div>
 
             <div className={styles.formGroup}>

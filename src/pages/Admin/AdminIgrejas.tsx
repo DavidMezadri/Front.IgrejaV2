@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import igrejaService, { Igreja } from '../../services/igrejaService'
 import enderecoService, { Endereco } from '../../services/enderecoService'
+import { useFormErrors } from '../../hooks/useFormErrors'
+import { isValidEmail } from '../../utils/validators'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
@@ -31,6 +33,7 @@ export default function AdminIgrejas() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<IgrejaForm>(defaultForm)
+  const { errors, clearError, clearAll, validate } = useFormErrors<Record<string, string>>()
 
   useEffect(() => {
     carregarDados()
@@ -89,10 +92,13 @@ export default function AdminIgrejas() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!form.nome || !form.email) {
-      alert('Preencha nome e email')
-      return
-    }
+
+    const valido = validate([
+      { field: 'nome', value: form.nome, required: true },
+      { field: 'email', value: form.email, required: true, format: isValidEmail },
+    ])
+
+    if (!valido) return
 
     try {
       const payload: Igreja = {
@@ -111,6 +117,7 @@ export default function AdminIgrejas() {
       }
       await carregarDados()
       resetForm()
+      clearAll()
       setShowForm(false)
     } catch (err) {
       console.error('Erro:', err)
@@ -190,9 +197,10 @@ export default function AdminIgrejas() {
               <input
                 type="text"
                 value={form.nome}
-                onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                required
+                onChange={(e) => { clearError('nome'); setForm({ ...form, nome: e.target.value }) }}
+                className={errors.nome ? styles.inputError : ''}
               />
+              {errors.nome && <span className={styles.fieldError}>{errors.nome}</span>}
             </div>
 
             <div className={styles.formGroup}>
@@ -200,9 +208,10 @@ export default function AdminIgrejas() {
               <input
                 type="email"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                required
+                onChange={(e) => { clearError('email'); setForm({ ...form, email: e.target.value }) }}
+                className={errors.email ? styles.inputError : ''}
               />
+              {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
             </div>
 
             <div className={styles.formGroup}>
