@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import configService from '../../services/configService'
+import { isValidEmail } from '../../utils/validators'
 import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import styles from './Admin.module.css'
 
@@ -46,6 +47,20 @@ export default function AdminConfiguracoes() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
+    const erros: string[] = []
+    if (!config['igreja.nome'] || !config['igreja.nome'].toString().trim()) {
+      erros.push('Nome da Igreja é obrigatório')
+    }
+    if (!config['igreja.email'] || !isValidEmail(config['igreja.email'].toString())) {
+      erros.push('Email válido é obrigatório')
+    }
+
+    if (erros.length > 0) {
+      alert(`Verifique os seguintes campos:\n• ${erros.join('\n• ')}`)
+      return
+    }
+
     setLoading(true)
     try {
       await configService.update(config)
