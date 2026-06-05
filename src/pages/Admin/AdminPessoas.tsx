@@ -3,6 +3,8 @@ import pessoasService from '../../services/pessoasService'
 import familiasService from '../../services/familiasService'
 import enderecoService, { Endereco } from '../../services/enderecoService'
 import pessoaEnderecoService from '../../services/pessoaEnderecoService'
+import { useFormErrors } from '../../hooks/useFormErrors'
+import { isValidEmail } from '../../utils/validators'
 import { FormField } from '../../components/molecules/GenericForm/GenericForm'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import Select from '../../components/atoms/Select/Select'
@@ -69,6 +71,7 @@ export default function AdminPessoas() {
   const [showEnderecoSelect, setShowEnderecoSelect] = useState(false)
   const [selectedEnderecoId, setSelectedEnderecoId] = useState<number | null>(null)
   const [enderecoPrincipal, setEnderecoPrincipal] = useState(false)
+  const { errors, clearError, clearAll, validate } = useFormErrors<Record<string, string>>()
 
   const SEXO_OPTIONS = [
     { id: 1, nome: 'Masculino' },
@@ -203,10 +206,14 @@ export default function AdminPessoas() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!form.nome || !form.email) {
-      alert('Preencha os campos obrigatórios')
-      return
-    }
+
+    const valido = validate([
+      { field: 'nome', value: form.nome, required: true },
+      { field: 'email', value: form.email, required: true, format: isValidEmail },
+      { field: 'membroDesde', value: form.membroDesde, required: true },
+    ])
+
+    if (!valido) return
 
     try {
       const payload = toPayload(form)
@@ -217,6 +224,7 @@ export default function AdminPessoas() {
       }
       await carregarDados()
       resetForm()
+      clearAll()
       setShowForm(false)
     } catch (err) {
       console.error('Erro:', err)
@@ -375,6 +383,8 @@ export default function AdminPessoas() {
                 )
               }
 
+              const hasError = errors[field.name]
+
               return (
                 <div key={field.name} className={styles.formGroup}>
                   {field.type === 'select' ? (
@@ -385,7 +395,8 @@ export default function AdminPessoas() {
                       </label>
                       <Select
                         value={form[field.name as keyof PessoaForm] || ''}
-                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        onChange={(e) => { clearError(field.name); setForm({ ...form, [field.name]: e.target.value }) }}
+                        className={hasError ? styles.inputError : ''}
                         required={field.required}
                       >
                         <option value="">Selecione...</option>
@@ -395,6 +406,7 @@ export default function AdminPessoas() {
                           </option>
                         ))}
                       </Select>
+                      {hasError && <span className={styles.fieldError}>{hasError}</span>}
                     </>
                   ) : field.type === 'textarea' ? (
                     <>
@@ -404,9 +416,11 @@ export default function AdminPessoas() {
                       </label>
                       <textarea
                         value={form[field.name as keyof PessoaForm] || ''}
-                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        onChange={(e) => { clearError(field.name); setForm({ ...form, [field.name]: e.target.value }) }}
+                        className={hasError ? styles.inputError : ''}
                         required={field.required}
                       />
+                      {hasError && <span className={styles.fieldError}>{hasError}</span>}
                     </>
                   ) : (
                     <>
@@ -417,9 +431,11 @@ export default function AdminPessoas() {
                       <input
                         type={field.type}
                         value={form[field.name as keyof PessoaForm] || ''}
-                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        onChange={(e) => { clearError(field.name); setForm({ ...form, [field.name]: e.target.value }) }}
+                        className={hasError ? styles.inputError : ''}
                         required={field.required}
                       />
+                      {hasError && <span className={styles.fieldError}>{hasError}</span>}
                     </>
                   )}
                 </div>
