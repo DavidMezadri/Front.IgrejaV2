@@ -26,13 +26,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('auth_token')
     const savedRole = localStorage.getItem('auth_role')
-    if (!token) { setLoading(false); return }
+    if (!token) {
+      setLoading(false)
+      return
+    }
     authService.me()
       .then(userData => {
         setUser(userData)
         setRole(savedRole || 'membro')
       })
-      .catch(() => {
+      .catch(error => {
+        console.error('Erro ao validar token:', error)
         localStorage.removeItem('auth_token')
         localStorage.removeItem('auth_role')
       })

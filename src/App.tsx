@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useTheme } from './hooks/useTheme'
 import { EventModalProvider } from './contexts/EventModalContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import PageLayout from './components/templates/PageLayout/PageLayout'
 import AdminLayout from './components/templates/AdminLayout/AdminLayout'
 import Home from './pages/Home/Home'
@@ -34,8 +35,12 @@ export default function App() {
     <EventModalProvider>
       <HashRouter>
         <Routes>
-          {/* Rotas do Admin */}
-          <Route path="/admin/*" element={<AdminLayout theme={theme} toggleTheme={toggleTheme} />}>
+          {/* Rotas do Admin - Protegidas */}
+          <Route path="/admin/*" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminLayout theme={theme} toggleTheme={toggleTheme} />
+            </ProtectedRoute>
+          }>
             <Route index element={<AdminHome />} />
             <Route path="igrejas" element={<AdminIgrejas />} />
             <Route path="enderecos" element={<AdminEnderecos />} />
