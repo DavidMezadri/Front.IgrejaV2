@@ -14,9 +14,18 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
+    const status = err.response?.status
+    const url = err.config?.url || 'desconhecido'
+
+    if (status === 401) {
+      console.error(`[401] Não autorizado: ${url}`)
       localStorage.removeItem('auth_token')
+    } else if (status === 403) {
+      console.error(`[403] Proibido: ${url}`)
+    } else if (err.message === 'Network Error') {
+      console.error(`[Network] Erro de conexão com API: ${url}`)
     }
+
     return Promise.reject(err)
   }
 )
