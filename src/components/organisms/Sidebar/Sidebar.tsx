@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/AuthContext'
 import NavItem from '../../molecules/NavItem/NavItem'
 import * as Icons from '../../atoms/Icon/Icon'
-import { USER_TYPE_LABELS, TipoUsuarioEnum } from '../../../config/userTypes'
+import { USER_TYPE_LABELS, ADMIN_AREA_LABELS, TipoUsuarioEnum } from '../../../config/userTypes'
 import styles from './Sidebar.module.css'
 
 const GROUPS = [
@@ -33,9 +33,12 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
     close()
   }
 
+  const canAccessAdmin = isAuthenticated && user && user.tipoUsuario !== TipoUsuarioEnum.Membro && user.tipoUsuario !== TipoUsuarioEnum.Visitante
+  const adminAreaLabel = user ? ADMIN_AREA_LABELS[user.tipoUsuario] : 'Área Admin'
+
   const accountItems = isAuthenticated ? [
     { to: "/oracao", label: "Pedir Oração", icon: Icons.HeartIcon, hidden: false },
-    ...(isAdmin ? [{ to: "/admin", label: "Área Admin", icon: Icons.ShieldIcon }] : []),
+    ...(canAccessAdmin ? [{ to: "/admin", label: adminAreaLabel, icon: Icons.ShieldIcon }] : []),
     { label: "Sair", icon: Icons.LogoutIcon, onClick: handleLogout, isDanger: true },
   ] : [
     { to: "/login", label: "Entrar", icon: Icons.LoginIcon },

@@ -16,6 +16,15 @@ export const USER_TYPE_LABELS: Record<TipoUsuarioEnum | number, string> = {
   [TipoUsuarioEnum.Visitante]: 'Visitante',
 }
 
+export const ADMIN_AREA_LABELS: Record<TipoUsuarioEnum | number, string> = {
+  [TipoUsuarioEnum.Administrador]: 'Área Admin',
+  [TipoUsuarioEnum.Pastor]: 'Painel do Pastor',
+  [TipoUsuarioEnum.Presidente]: 'Painel do Presidente',
+  [TipoUsuarioEnum.Comissao]: 'Painel da Comissão',
+  [TipoUsuarioEnum.Membro]: 'Minha Área',
+  [TipoUsuarioEnum.Visitante]: 'Minha Área',
+}
+
 export const ADMIN_TABS: Record<TipoUsuarioEnum | number, string[]> = {
   [TipoUsuarioEnum.Administrador]: [
     'igrejas',
