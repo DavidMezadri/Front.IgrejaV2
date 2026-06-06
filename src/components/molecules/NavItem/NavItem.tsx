@@ -8,9 +8,11 @@ export default function NavItem({ to, icon: IconComponent, children, onClick }) 
       className={({ isActive }) => `${styles.link}${isActive ? ` ${styles.active}` : ''}`}
       onClick={onClick}
     >
-      <span className={styles.icon} aria-hidden="true">
-        <IconComponent size={18} />
-      </span>
+      {IconComponent && (
+        <span className={styles.icon} aria-hidden="true">
+          <IconComponent size={18} />
+        </span>
+      )}
       <span>{children}</span>
     </NavLink>
   )
