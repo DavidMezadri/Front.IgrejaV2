@@ -35,7 +35,7 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
 
   const accountItems = isAuthenticated ? [
     { to: "/oracao", label: "🙏 Pedir Oração", icon: Icons.HeartIcon, hidden: false },
-    ...(isAdmin ? [{ to: "/admin", label: "⚙️ Área Admin", icon: Icons.SettingsIcon }] : []),
+    ...(isAdmin ? [{ to: "/admin", label: "Área Admin" }] : []),
     { label: "Sair", icon: Icons.LogoutIcon, onClick: handleLogout, isDanger: true },
   ] : [
     { to: "/login", label: "Entrar", icon: Icons.LoginIcon },
