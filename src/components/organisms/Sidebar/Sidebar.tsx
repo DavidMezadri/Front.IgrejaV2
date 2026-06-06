@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/AuthContext'
 import NavItem from '../../molecules/NavItem/NavItem'
 import * as Icons from '../../atoms/Icon/Icon'
+import { USER_TYPE_LABELS, TipoUsuarioEnum } from '../../../config/userTypes'
 import styles from './Sidebar.module.css'
 
 const GROUPS = [
@@ -22,7 +23,7 @@ const GROUPS = [
 
 export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
   const [open, setOpen] = useState(false)
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const close = () => setOpen(false)
 
@@ -34,7 +35,7 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
 
   const accountItems = isAuthenticated ? [
     { to: "/oracao", label: "🙏 Pedir Oração", icon: Icons.HeartIcon, hidden: false },
-    ...(user?.role === 'admin' ? [{ to: "/admin", label: "Painel Admin", icon: Icons.SettingsIcon }] : []),
+    ...(isAdmin ? [{ to: "/admin", label: "⚙️ Área Admin", icon: Icons.SettingsIcon }] : []),
     { label: "Sair", icon: Icons.LogoutIcon, onClick: handleLogout, isDanger: true },
   ] : [
     { to: "/login", label: "Entrar", icon: Icons.LoginIcon },
@@ -59,7 +60,9 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
           <div className={styles.userSection}>
             <div className={styles.userAvatar}>👤</div>
             <div className={styles.userName}>{user.nome || user.username}</div>
-            <div className={styles.userRole}>{user.role === 'admin' ? 'Administrador' : 'Membro'}</div>
+            <div className={styles.userRole}>
+              {USER_TYPE_LABELS[user.tipoUsuario] || 'Membro'}
+            </div>
           </div>
         )}
 
