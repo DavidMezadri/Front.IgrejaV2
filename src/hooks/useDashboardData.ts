@@ -4,8 +4,6 @@ import pessoasService from '../services/pessoasService'
 import eventosService from '../services/eventosService'
 
 export function useDashboardData() {
-  // TODO: Endpoint de presencas retorna 405 para GET
-  // Backend espera POST. Verificar com o time backend se é intencional.
   const { data: presencas = [] } = useQuery({
     queryKey: ['presencas'],
     queryFn: async () => {
