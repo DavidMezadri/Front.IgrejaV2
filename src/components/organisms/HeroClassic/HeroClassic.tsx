@@ -14,7 +14,7 @@ const DEFAULT_SUBTITULO = 'Domingos às 9h e 19h. Estudos durante a semana, mini
 
 export default function HeroClassic({ titulo, subtitulo, textoApoio, fotoBanner }: HeroClassicProps = {}) {
   const { data: imagensData = [] } = useImagensUpload()
-  const carouselImages = imagensData.map(img => `${import.meta.env.VITE_API_URL}${img.url}`)
+  const carouselImages = imagensData.map(img => img.url)
   return (
     <section className={styles.hero}>
       <div className="container">
@@ -45,7 +45,7 @@ export default function HeroClassic({ titulo, subtitulo, textoApoio, fotoBanner 
             {carouselImages.length > 0 ? (
               <ImageCarousel images={carouselImages} autoPlay interval={5000} />
             ) : fotoBanner ? (
-              <img src={`${import.meta.env.VITE_API_URL}${fotoBanner}`} alt="Banner da congregação" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+              <img src={fotoBanner} alt="Banner da congregação" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
             ) : (
               <>
                 <div className={styles.stamp}>Templo<br />Principal</div>

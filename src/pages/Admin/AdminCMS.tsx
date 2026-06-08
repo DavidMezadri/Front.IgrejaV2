@@ -190,7 +190,7 @@ export default function AdminCMS() {
                   {imagens.map((img) => (
                     <div key={img.nomeArquivo} className={styles.imageCard}>
                       <img
-                        src={`${import.meta.env.VITE_API_URL}${img.url}`}
+                        src={img.url}
                         alt={img.nomeArquivo}
                       />
                       <button
