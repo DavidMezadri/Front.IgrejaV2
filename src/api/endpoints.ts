@@ -95,4 +95,12 @@ export const EP = {
     UPDATE: ((id: string | number) => `/enderecos/${id}`) as EndpointId,
     REMOVE: ((id: string | number) => `/enderecos/${id}`) as EndpointId,
   },
+  AVISOS: {
+    LIST:   '/avisos',
+    ONE:    ((id: string | number) => `/avisos/${id}`) as EndpointId,
+    ATIVOS: '/avisos/ativos',
+    CREATE: '/avisos',
+    UPDATE: ((id: string | number) => `/avisos/${id}`) as EndpointId,
+    REMOVE: ((id: string | number) => `/avisos/${id}`) as EndpointId,
+  },
 }

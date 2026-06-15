@@ -12,9 +12,17 @@ interface HeroClassicProps {
 const DEFAULT_TITULO = 'Um lugar para encontrar a Cristo, a si mesmo, e ao próximo.'
 const DEFAULT_SUBTITULO = 'Domingos às 9h e 19h. Estudos durante a semana, ministérios para todas as idades e uma comunidade que caminha junto.'
 
+const getImageUrl = (url: string) => {
+  const apiUrl = import.meta.env.VITE_API_URL
+  if (!apiUrl?.startsWith('http')) return url
+  // Remove /api do final se existir, pois imagens estão em /uploads, não /api/uploads
+  const domainUrl = apiUrl.replace(/\/api$/, '')
+  return `${domainUrl}${url}`
+}
+
 export default function HeroClassic({ titulo, subtitulo, textoApoio, fotoBanner }: HeroClassicProps = {}) {
   const { data: imagensData = [] } = useImagensUpload()
-  const carouselImages = imagensData.map(img => img.url)
+  const carouselImages = imagensData.map(img => getImageUrl(img.url))
   return (
     <section className={styles.hero}>
       <div className="container">

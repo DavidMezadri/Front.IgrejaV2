@@ -4,6 +4,14 @@ import uploadService from '../../services/uploadService'
 import { useQueryClient } from '@tanstack/react-query'
 import styles from './Admin.module.css'
 
+const getImageUrl = (url: string) => {
+  const apiUrl = import.meta.env.VITE_API_URL
+  if (!apiUrl?.startsWith('http')) return url
+  // Remove /api do final se existir, pois imagens estão em /uploads, não /api/uploads
+  const domainUrl = apiUrl.replace(/\/api$/, '')
+  return `${domainUrl}${url}`
+}
+
 type TabId = 'home' | 'igreja' | 'sobre'
 
 interface Tab {
@@ -190,7 +198,7 @@ export default function AdminCMS() {
                   {imagens.map((img) => (
                     <div key={img.nomeArquivo} className={styles.imageCard}>
                       <img
-                        src={img.url}
+                        src={getImageUrl(img.url)}
                         alt={img.nomeArquivo}
                       />
                       <button

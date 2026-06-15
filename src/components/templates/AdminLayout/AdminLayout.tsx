@@ -7,6 +7,7 @@ import styles from './AdminLayout.module.css'
 const ADMIN_SECTIONS = [
   { id: 'admin', path: '/admin', label: 'Dashboard', icon: Icons.HomeIcon },
   { id: 'cms', path: '/admin/cms', label: 'CMS', icon: Icons.EditIcon, desc: 'Editar conteúdo das páginas públicas' },
+  { id: 'avisos', path: '/admin/avisos', label: 'Avisos', icon: Icons.MegaphoneIcon, desc: 'Gerenciar avisos e notícias' },
   { id: 'igrejas', path: '/admin/igrejas', label: 'Igrejas', icon: Icons.HomeIcon, desc: 'Gerenciar dados de igrejas' },
   { id: 'enderecos', path: '/admin/enderecos', label: 'Endereços', icon: Icons.HomeIcon, desc: 'Gerenciar endereços cadastrados' },
   { id: 'pessoas', path: '/admin/pessoas', label: 'Pessoas', icon: Icons.UsersIcon, desc: 'Gerenciar membros da comunidade' },
@@ -17,7 +18,6 @@ const ADMIN_SECTIONS = [
   { id: 'traducoes', path: '/admin/traducoes', label: 'Traduções', icon: Icons.BookIcon, desc: 'Gerenciar traduções da bíblia' },
   { id: 'versiculos', path: '/admin/versiculos', label: 'Versículos', icon: Icons.BookIcon, desc: 'Gerenciar versículos da bíblia' },
   { id: 'usuarios', path: '/admin/usuarios', label: 'Usuários', icon: Icons.LoginIcon, desc: 'Gerenciar acesso ao sistema' },
-  { id: 'configuracoes', path: '/admin/configuracoes', label: 'Configurações', icon: Icons.SettingsIcon, desc: 'Ajustes gerais do sistema' },
 ]
 
 export default function AdminLayout({ theme, toggleTheme }) {

@@ -14,7 +14,7 @@ export default function CalendarAgenda({ onPick, eventos = [] }) {
         m.get(k).items.push(e)
       })
     return [...m.values()]
-  }, [])
+  }, [eventos])
 
   const DIAS_CURTO = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"]
 

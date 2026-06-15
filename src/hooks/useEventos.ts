@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import eventosService from '../services/eventosService'
-import { DATA } from '../data/mockData'
 
 export function useEventos(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: ['eventos', params],
     queryFn: () => eventosService.list(params),
-    placeholderData: DATA.eventos,
     staleTime: 1000 * 60 * 2,
+    retry: 3,
+    retryDelay: 1000,
   })
 }
 

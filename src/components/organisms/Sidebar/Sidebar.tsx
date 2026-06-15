@@ -10,7 +10,6 @@ const GROUPS = [
   { title: "Navegação", items: [
     { to: "/inicio",     label: "Início",         icon: Icons.HomeIcon },
     { to: "/calendario", label: "Calendário",      icon: Icons.CalendarIcon },
-    { to: "/semanal",    label: "Cultos",          icon: Icons.MusicIcon },
     { to: "/avisos",     label: "Avisos",          icon: Icons.MegaphoneIcon },
   ]},
   { title: "Comunidade", items: [
@@ -109,10 +108,6 @@ export default function Sidebar({ theme, toggleTheme, nomeIgreja = 'Igreja' }) {
             </span>
             <span>Tema {theme === 'dark' ? 'claro' : 'escuro'}</span>
           </button>
-          <div className={styles.meta}>
-            Próximo culto<br />
-            <b>Dom · 09:00</b>
-          </div>
         </div>
       </aside>
     </>

@@ -21,10 +21,10 @@ import AdminTiposEvento from './pages/Admin/AdminTiposEvento'
 import AdminEventos from './pages/Admin/AdminEventos'
 import AdminPresencas from './pages/Admin/AdminPresencas'
 import AdminUsuarios from './pages/Admin/AdminUsuarios'
-import AdminConfiguracoes from './pages/Admin/AdminConfiguracoes'
 import AdminTraducoes from './pages/Admin/AdminTraducoes'
 import AdminVersiculos from './pages/Admin/AdminVersiculos'
 import AdminCMS from './pages/Admin/AdminCMS'
+import AdminAvisos from './pages/Admin/AdminAvisos'
 import AdminIgrejas from './pages/Admin/AdminIgrejas'
 import AdminEnderecos from './pages/Admin/AdminEnderecos'
 
@@ -42,6 +42,7 @@ export default function App() {
             </ProtectedRoute>
           }>
             <Route index element={<AdminHome />} />
+            <Route path="avisos" element={<AdminAvisos />} />
             <Route path="igrejas" element={<AdminIgrejas />} />
             <Route path="enderecos" element={<AdminEnderecos />} />
             <Route path="pessoas" element={<AdminPessoas />} />
@@ -50,7 +51,6 @@ export default function App() {
             <Route path="eventos" element={<AdminEventos />} />
             <Route path="presencas" element={<AdminPresencas />} />
             <Route path="usuarios" element={<AdminUsuarios />} />
-            <Route path="configuracoes" element={<AdminConfiguracoes />} />
             <Route path="cms" element={<AdminCMS />} />
             <Route path="traducoes" element={<AdminTraducoes />} />
             <Route path="versiculos" element={<AdminVersiculos />} />

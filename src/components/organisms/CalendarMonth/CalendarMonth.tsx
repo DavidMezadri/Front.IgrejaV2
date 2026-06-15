@@ -29,9 +29,9 @@ export default function CalendarMonth({ year, month, onPick, eventos = [] }) {
       ;(map[k] ||= []).push(e)
     })
     return map
-  }, [])
+  }, [eventos])
 
-  const today = new Date(2026, 4, 7)
+  const today = new Date()
 
   return (
     <div className={styles.grid}>
