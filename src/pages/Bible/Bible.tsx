@@ -33,6 +33,9 @@ export default function Bible() {
     { id: 3, nome: 'Nova Versão Internacional', abreviacao: 'NVI' },
   ]
 
+  // Usar a mesma URL base dos demais endpoints
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   // Buscar versículos do backend
   const { data: versiculos = [], isLoading, error } = useQuery({
     queryKey: ['versiculos', livro, capitulo, traducao, inicio, fim],
@@ -42,7 +45,7 @@ export default function Bible() {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/api/versiculos/livro/${livro}/capitulo/${capitulo}/traducao/${traducao}/intervalo?inicio=${inicio}&fim=${fim}`,
+          `${apiUrl}/versiculos/livro/${livro}/capitulo/${capitulo}/traducao/${traducao}/intervalo?inicio=${inicio}&fim=${fim}`,
           { signal: controller.signal }
         );
 

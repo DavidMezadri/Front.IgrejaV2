@@ -14,10 +14,10 @@ export const BuscadorBiblia = ({ onSelectVersiculos }: BuscadorBibliaProps) => {
   const [inicio, setInicio] = useState(1);
   const [fim, setFim] = useState(10);
 
-  // Lista de traduções disponíveis
+  // Lista de traduções disponíveis (client.ts já usa VITE_API_URL)
   const { data: traducoes = [] } = useQuery({
     queryKey: ['traducoes'],
-    queryFn: () => client.get('/traducoes').then(r => r.data),
+    queryFn: () => client.get('traducoes').then(r => r.data),
     retry: 1,
   });
 
