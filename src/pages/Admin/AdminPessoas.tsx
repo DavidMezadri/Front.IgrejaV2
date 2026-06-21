@@ -90,7 +90,7 @@ export default function AdminPessoas() {
   const FORM_FIELDS: FormField[] = [
     { name: 'nome', label: 'Nome', type: 'text', required: true },
     { name: 'email', label: 'E-mail', type: 'email', required: true },
-    { name: 'telefone', label: 'Telefone', type: 'text' },
+    { name: 'telefone', label: 'Telefone', type: 'tel' },
     { name: 'dataNascimento', label: 'Data de Nascimento', type: 'date' },
     { name: 'sexo', label: 'Sexo', type: 'select', options: SEXO_OPTIONS },
     { name: 'dataBatismo', label: 'Data de Batismo', type: 'date' },

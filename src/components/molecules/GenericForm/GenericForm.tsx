@@ -3,12 +3,14 @@ import Input from '../../atoms/Input/Input'
 import Select from '../../atoms/Select/Select'
 import Textarea from '../../atoms/Textarea/Textarea'
 import Checkbox from '../../atoms/Checkbox/Checkbox'
+import InputEmail from '../../atoms/InputEmail/InputEmail'
+import InputTelefone from '../../atoms/InputTelefone/InputTelefone'
 import styles from './GenericForm.module.css'
 
 export interface FormField {
   name: string
   label: string
-  type: 'text' | 'email' | 'number' | 'select' | 'checkbox' | 'datetime-local' | 'date' | 'textarea'
+  type: 'text' | 'email' | 'tel' | 'number' | 'select' | 'checkbox' | 'datetime-local' | 'date' | 'textarea'
   required?: boolean
   options?: Array<{ id: string | number; nome: string }>
 }
@@ -77,6 +79,30 @@ export default function GenericForm({
                 <Textarea
                   value={values[field.name] || ''}
                   onChange={(e) => onValueChange({ [field.name]: e.target.value })}
+                  required={field.required}
+                />
+              </>
+            ) : field.type === 'email' ? (
+              <>
+                <label>
+                  {field.label}
+                  {field.required && ' *'}
+                </label>
+                <InputEmail
+                  value={values[field.name] || ''}
+                  onChange={(e) => onValueChange({ [field.name]: e.target.value })}
+                  required={field.required}
+                />
+              </>
+            ) : field.type === 'tel' ? (
+              <>
+                <label>
+                  {field.label}
+                  {field.required && ' *'}
+                </label>
+                <InputTelefone
+                  value={values[field.name] || ''}
+                  onChange={(value) => onValueChange({ [field.name]: value })}
                   required={field.required}
                 />
               </>

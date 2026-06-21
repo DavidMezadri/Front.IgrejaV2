@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import igrejaService, { Igreja } from '../../services/igrejaService'
 import enderecoService, { Endereco } from '../../services/enderecoService'
 import { useFormErrors } from '../../hooks/useFormErrors'
-import { isValidEmail, isValidTelefone } from '../../utils/validators'
+import { isValidEmail } from '../../utils/validators'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
+import InputEmail from '../../components/atoms/InputEmail/InputEmail'
+import InputTelefone from '../../components/atoms/InputTelefone/InputTelefone'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
@@ -96,7 +98,6 @@ export default function AdminIgrejas() {
     const valido = validate([
       { field: 'nome', value: form.nome, required: true },
       { field: 'email', value: form.email, required: true, format: isValidEmail },
-      { field: 'telefone', value: form.telefone, custom: (val) => val && !isValidTelefone(val) ? 'Telefone inválido' : null },
     ])
 
     if (!valido) return
@@ -206,10 +207,9 @@ export default function AdminIgrejas() {
 
             <div className={styles.formGroup}>
               <label>Email *</label>
-              <input
-                type="email"
+              <InputEmail
                 value={form.email}
-                onChange={(e) => { clearError('email'); setForm({ ...form, email: e.target.value }) }}
+                onChange={(e) => { clearError('email'); setForm({ ...form, email: e.currentTarget.value }) }}
                 className={errors.email ? styles.inputError : ''}
               />
               {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
@@ -217,10 +217,9 @@ export default function AdminIgrejas() {
 
             <div className={styles.formGroup}>
               <label>Telefone</label>
-              <input
-                type="tel"
+              <InputTelefone
                 value={form.telefone}
-                onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+                onChange={(value) => setForm({ ...form, telefone: value })}
               />
             </div>
 
