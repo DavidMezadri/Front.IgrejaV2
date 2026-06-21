@@ -6,6 +6,7 @@ import { isValidEmail } from '../../utils/validators'
 import { AsyncSearchSelect } from '../../components/molecules/AsyncSearchSelect'
 import InputEmail from '../../components/atoms/InputEmail/InputEmail'
 import InputTelefone from '../../components/atoms/InputTelefone/InputTelefone'
+import InputCNPJ from '../../components/atoms/InputCNPJ/InputCNPJ'
 import Badge from '../../components/atoms/Badge/Badge'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
@@ -245,10 +246,9 @@ export default function AdminIgrejas() {
 
             <div className={styles.formGroup}>
               <label>CNPJ</label>
-              <input
-                type="text"
+              <InputCNPJ
                 value={form.cnpj}
-                onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
+                onChange={(value) => setForm({ ...form, cnpj: value })}
               />
             </div>
 
