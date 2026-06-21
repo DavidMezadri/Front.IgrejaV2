@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import versiculoService from '../../services/versiculoService'
 import traducaoService from '../../services/traducaoService'
 import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
+import Select from '../../components/atoms/Select/Select'
 import { livroOptions } from '../../types/LivroEnum'
 import * as Icons from '../../components/atoms/Icon/Icon'
 import styles from './Admin.module.css'
@@ -182,27 +183,25 @@ export default function AdminVersiculos() {
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-        <select
+        <Select
           value={filtroLivro}
           onChange={(e) => setFiltroLivro(e.target.value ? parseInt(e.target.value) : '')}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
         >
           <option value="">Todos os livros</option>
           {livroOptions.map(livro => (
             <option key={livro.id} value={livro.id}>{livro.nome}</option>
           ))}
-        </select>
+        </Select>
 
-        <select
+        <Select
           value={filtroTraducao}
           onChange={(e) => setFiltroTraducao(e.target.value ? parseInt(e.target.value) : '')}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
         >
           <option value="">Todas as traduções</option>
           {traducoes.map(trad => (
             <option key={trad.id} value={trad.id}>{trad.nome}</option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {showForm && (
