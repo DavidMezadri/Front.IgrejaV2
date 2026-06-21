@@ -81,8 +81,7 @@ export default function AdminUsuarios() {
     try {
       if (editingId) {
         await usuariosService.update(editingId, {
-          nome: form.nome,
-          email: form.email,
+          nomeUsuario: form.nome,
           tipoUsuario: parseInt(form.tipoUsuario),
           ativo: form.ativo,
         })
@@ -109,7 +108,7 @@ export default function AdminUsuarios() {
 
   function handleEdit(usuario: Usuario) {
     setForm({
-      nome: usuario.nome,
+      nome: usuario.nomeUsuario,
       email: usuario.email,
       tipoUsuario: String(usuario.tipoUsuario || 4),
       ativo: usuario.ativo,
@@ -166,7 +165,7 @@ export default function AdminUsuarios() {
           <tbody>
             {usuarios.map((u: Usuario) => (
               <tr key={u.id}>
-                <td><b>{u.nome}</b></td>
+                <td><b>{u.nomeUsuario}</b></td>
                 <td><code className={styles.codeSmall}>{u.nomeUsuario}</code></td>
                 <td>{u.email}</td>
                 <td>{getRoleName(u.tipoUsuario)}</td>

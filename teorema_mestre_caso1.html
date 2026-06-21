@@ -1,0 +1,36 @@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+
+<div style="padding: 2rem 1.5rem; display: flex; justify-content: center;">
+  <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem 2.5rem; max-width: 520px; width: 100%;">
+    
+    <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.25rem 0; letter-spacing: 0.05em; text-transform: uppercase;">Teorema mestre — caso 1</p>
+
+    <div style="border-left: 3px solid #7F77DD; padding-left: 1.25rem; margin-bottom: 1.5rem;">
+      <div id="cond" style="font-size: 1.1rem; color: var(--color-text-primary); margin-bottom: 0.75rem;"></div>
+      <div id="conc" style="font-size: 1.2rem; color: var(--color-text-primary);"></div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">
+      A recursão domina quando <span id="note"></span> cresce mais devagar que <span id="note2"></span>.
+    </p>
+  </div>
+</div>
+
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']] },
+  startup: {
+    ready() {
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(() => {
+        document.getElementById('cond').innerHTML = 'Se $f(n) = O\\!\\left(n^{\\log_b a\\, -\\, \\varepsilon}\\right)$ para algum $\\varepsilon > 0$,';
+        document.getElementById('conc').innerHTML = 'então $T(n) = \\Theta\\!\\left(n^{\\log_b a}\\right)$.';
+        document.getElementById('note').innerHTML = '$f(n)$';
+        document.getElementById('note2').innerHTML = '$n^{\\log_b a}$';
+        MathJax.typesetPromise();
+      });
+    }
+  }
+};
+</script>
