@@ -14,8 +14,9 @@ interface IgrejaForm {
   nome: string
   email: string
   telefone: string
+  cnpj: string
   enderecoId: string
-  lema: string
+  observacoes: string
   ativo: boolean
 }
 
@@ -23,8 +24,9 @@ const defaultForm: IgrejaForm = {
   nome: '',
   email: '',
   telefone: '',
+  cnpj: '',
   enderecoId: '',
-  lema: '',
+  observacoes: '',
   ativo: true,
 }
 
@@ -58,7 +60,7 @@ export default function AdminIgrejas() {
   }
 
   function resetForm() {
-    setForm(defaultForm)
+    setForm({ ...defaultForm })
     setEditingId(null)
   }
 
@@ -107,7 +109,8 @@ export default function AdminIgrejas() {
         nome: form.nome,
         email: form.email,
         telefone: form.telefone,
-        lema: form.lema,
+        cnpj: form.cnpj || undefined,
+        observacoes: form.observacoes || undefined,
         ativo: form.ativo,
         enderecoId: form.enderecoId === '' ? undefined : Number(form.enderecoId),
       }
@@ -132,8 +135,9 @@ export default function AdminIgrejas() {
       const payload: Igreja = {
         nome: igreja.nome,
         email: igreja.email,
-        telefone: igreja.telefone,
-        lema: igreja.lema,
+        telefone: igreja.telefone || undefined,
+        cnpj: igreja.cnpj || undefined,
+        observacoes: igreja.observacoes || undefined,
         ativo: !igreja.ativo,
         enderecoId: igreja.enderecoId,
       }
@@ -161,8 +165,9 @@ export default function AdminIgrejas() {
       nome: igreja.nome,
       email: igreja.email,
       telefone: igreja.telefone || '',
+      cnpj: igreja.cnpj || '',
       enderecoId: String(igreja.enderecoId || ''),
-      lema: igreja.lema || '',
+      observacoes: igreja.observacoes || '',
       ativo: igreja.ativo !== undefined ? igreja.ativo : true,
     })
     setEditingId(igreja.id || null)
@@ -239,11 +244,20 @@ export default function AdminIgrejas() {
             </div>
 
             <div className={styles.formGroup}>
-              <label>Lema</label>
+              <label>CNPJ</label>
               <input
                 type="text"
-                value={form.lema}
-                onChange={(e) => setForm({ ...form, lema: e.target.value })}
+                value={form.cnpj}
+                onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Observações</label>
+              <textarea
+                value={form.observacoes}
+                onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
+                rows={3}
               />
             </div>
 
@@ -281,8 +295,8 @@ export default function AdminIgrejas() {
               <th>Nome</th>
               <th>Email</th>
               <th>Telefone</th>
+              <th>CNPJ</th>
               <th>Endereço</th>
-              <th>Lema</th>
               <th>Status</th>
               <th className={styles.actionsCell}>Ações</th>
             </tr>
@@ -293,8 +307,8 @@ export default function AdminIgrejas() {
                 <td><b>{igreja.nome}</b></td>
                 <td>{igreja.email}</td>
                 <td>{igreja.telefone || '—'}</td>
+                <td>{igreja.cnpj || '—'}</td>
                 <td>{getEnderecoLabel(igreja.enderecoId)}</td>
-                <td>{igreja.lema || '—'}</td>
                 <td>
                   <button
                     className={styles.statusBtn}

@@ -6,8 +6,9 @@ export interface Igreja {
   nome: string
   email: string
   telefone?: string
+  cnpj?: string
   enderecoId?: number
-  lema?: string
+  observacoes?: string
   ativo?: boolean
 }
 
