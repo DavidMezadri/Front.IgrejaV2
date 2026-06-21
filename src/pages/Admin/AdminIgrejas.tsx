@@ -231,7 +231,7 @@ export default function AdminIgrejas() {
                 value={form.enderecoId ? Number(form.enderecoId) : null}
                 onChange={(value) => setForm({ ...form, enderecoId: value ? String(value) : '' })}
                 onSearch={buscarEnderecos}
-                minChars={0}
+                minChars={1}
                 initialOptions={enderecos.map(e => ({
                   id: e.id,
                   label: `${e.rua}, ${e.numero} - ${e.bairro}, ${e.cidade}/${e.estado}`
