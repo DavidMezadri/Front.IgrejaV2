@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import versiculoService from '../../services/versiculoService'
 import traducaoService from '../../services/traducaoService'
 import GenericForm, { FormField } from '../../components/molecules/GenericForm/GenericForm'
@@ -18,14 +18,21 @@ interface Versiculo {
 interface Traducao {
   id: number
   nome: string
+  abreviacao?: string
 }
 
 export default function AdminVersiculos() {
   const [versiculos, setVersiculos] = useState<Versiculo[]>([])
   const [traducoes, setTraducoes] = useState<Traducao[]>([])
+  const [filtroLivro, setFiltroLivro] = useState<number | ''>('')
+  const [filtroTraducao, setFiltroTraducao] = useState<number | ''>('')
+  const [pagina, setPagina] = useState(1)
+  const [temProxima, setTemProxima] = useState(false)
+  const [carregandoMais, setCarregandoMais] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
+  const tableEndRef = useRef<HTMLDivElement>(null)
   const [form, setForm] = useState<Versiculo>({
     livro: 0,
     capitulo: 0,
@@ -43,22 +50,62 @@ export default function AdminVersiculos() {
   ]
 
   useEffect(() => {
-    carregarDados()
+    carregarTraducoes()
   }, [])
 
-  async function carregarDados() {
-    setLoading(true)
+  useEffect(() => {
+    setPagina(1)
+    setVersiculos([])
+    carregarVersiculos(1)
+  }, [filtroLivro, filtroTraducao])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && temProxima && !carregandoMais) {
+        carregarVersiculos(pagina + 1)
+      }
+    })
+    if (tableEndRef.current) observer.observe(tableEndRef.current)
+    return () => observer.disconnect()
+  }, [pagina, temProxima, carregandoMais])
+
+  async function carregarTraducoes() {
     try {
-      const [versiculosData, traducaoesData] = await Promise.all([
-        versiculoService.list(),
-        traducaoService.list()
-      ])
-      setVersiculos(versiculosData)
-      setTraducoes(traducaoesData)
+      const data = await traducaoService.list()
+      setTraducoes(data)
     } catch (err) {
-      console.error('Erro ao carregar:', err)
+      console.error('Erro ao carregar traduções:', err)
+    }
+  }
+
+  async function carregarVersiculos(pag: number) {
+    if (pag === 1) {
+      setLoading(true)
+    } else {
+      setCarregandoMais(true)
+    }
+
+    try {
+      const filtros: Record<string, unknown> = {}
+      if (filtroLivro) filtros.livro = filtroLivro
+      if (filtroTraducao) filtros.traducaoId = filtroTraducao
+
+      const response = await versiculoService.listPaginado(pag, 100, filtros)
+      const novosVersiculos = response.dados || []
+
+      if (pag === 1) {
+        setVersiculos(novosVersiculos)
+      } else {
+        setVersiculos(prev => [...prev, ...novosVersiculos])
+      }
+
+      setPagina(pag)
+      setTemProxima(response.temProxima || false)
+    } catch (err) {
+      console.error('Erro ao carregar versículos:', err)
     } finally {
       setLoading(false)
+      setCarregandoMais(false)
     }
   }
 
@@ -80,7 +127,9 @@ export default function AdminVersiculos() {
       } else {
         await versiculoService.create(form)
       }
-      await carregarDados()
+      setPagina(1)
+      setVersiculos([])
+      await carregarVersiculos(1)
       resetForm()
       setShowForm(false)
     } catch (err) {
@@ -93,7 +142,9 @@ export default function AdminVersiculos() {
     if (confirm('Tem certeza?')) {
       try {
         await versiculoService.remove(id)
-        await carregarDados()
+        setPagina(1)
+        setVersiculos([])
+        await carregarVersiculos(1)
       } catch (err) {
         alert('Erro ao deletar')
       }
@@ -128,6 +179,30 @@ export default function AdminVersiculos() {
         >
           + Novo Versículo
         </button>
+      </div>
+
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+        <select
+          value={filtroLivro}
+          onChange={(e) => setFiltroLivro(e.target.value ? parseInt(e.target.value) : '')}
+          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+          <option value="">Todos os livros</option>
+          {livroOptions.map(livro => (
+            <option key={livro.id} value={livro.id}>{livro.nome}</option>
+          ))}
+        </select>
+
+        <select
+          value={filtroTraducao}
+          onChange={(e) => setFiltroTraducao(e.target.value ? parseInt(e.target.value) : '')}
+          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+          <option value="">Todas as traduções</option>
+          {traducoes.map(trad => (
+            <option key={trad.id} value={trad.id}>{trad.nome}</option>
+          ))}
+        </select>
       </div>
 
       {showForm && (
@@ -171,10 +246,13 @@ export default function AdminVersiculos() {
             ))}
           </tbody>
         </table>
+        <div ref={tableEndRef} />
       </div>
 
+      {carregandoMais && <div style={{ textAlign: 'center', padding: '1rem' }}>Carregando mais...</div>}
+
       <div className={styles.info}>
-        <p><b>Total:</b> {versiculos.length} versículos cadastrados</p>
+        <p><b>Total exibido:</b> {versiculos.length} versículos</p>
       </div>
     </div>
   )
